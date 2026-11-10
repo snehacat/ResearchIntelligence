@@ -1,0 +1,70 @@
+{
+  "document_id": "attention_is_all_you_need",
+  "source_pdf": "validation/step5/papers/attention_is_all_you_need.pdf",
+  "annotator": "sneha",
+  "annotation_date": "2026-11-10",
+  "split": "dev",
+  "annotated_without_model_output": false,
+  "notes": "Gold set annotation created from PDF review. Model output was consulted for verification of field coverage, but ground truth values are from the paper itself.",
+  "fields": {
+    "title": {
+      "value": "Attention Is All You Need",
+      "evidence_pages": [1]
+    },
+    "publication_year": {
+      "value": "2017",
+      "evidence_pages": [1]
+    },
+    "abstract": {
+      "value": "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show that the Transformer outperforms architectures based on recurrent or convolutional layers in terms of quality while being more parallelizable and requiring significantly less time to train.",
+      "evidence_pages": [1]
+    },
+    "research_problem": {
+      "value": "Develop a sequence transduction model that relies only on attention mechanisms, eliminating recurrence and convolutions, to improve quality and training efficiency.",
+      "evidence_pages": [1, 2]
+    },
+    "methodology": {
+      "value": "Transformer architecture with multi-head self-attention, positional encodings, feed-forward layers, encoder-decoder structure, and residual connections.",
+      "evidence_pages": [2, 3, 5, 6]
+    },
+    "dataset": {
+      "value": "WMT 2014 English-to-German and English-to-French translation datasets",
+      "evidence_pages": [7]
+    },
+    "reported_results": {
+      "value": "28.4 BLEU on WMT 2014 English-to-German translation task, 41.8 BLEU on WMT 2014 English-to-French translation task. The Transformer base model achieves 28.4 BLEU on WMT 2014 En-De, outperforming previous best models. The Transformer big model achieves 41.8 BLEU on WMT 2014 En-Fr.",
+      "evidence_pages": [7, 8]
+    },
+    "authors": {
+      "value": [
+        "Ashish Vaswani",
+        "Noam Shazeer",
+        "Niki Parmar",
+        "Jakob Uszkoreit",
+        "Llion Jones",
+        "Aidan N. Gomez",
+        "Łukasz Kaiser",
+        "Illia Polosukhin"
+      ],
+      "evidence_pages": [1]
+    },
+    "evaluation_metrics": {
+      "value": [
+        "BLEU",
+        "perplexity",
+        "training time",
+        "parameter count"
+      ],
+      "evidence_pages": [7, 8]
+    },
+    "limitations": {
+      "value": [
+        "The Transformer has a quadratic time complexity in sequence length due to the self-attention mechanism, which makes it less efficient for very long sequences compared to RNNs.",
+        "The model requires large amounts of data and compute resources to train effectively.",
+        "Positional encodings are fixed-length sinusoidal functions; while they work well, other approaches might be more flexible.",
+        "The model does not inherently handle variable-length sequences in the same way RNNs do with their recurrence."
+      ],
+      "evidence_pages": [7, 8]
+    }
+  }
+}

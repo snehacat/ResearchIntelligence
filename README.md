@@ -61,6 +61,94 @@ See `DECISION.md` for detailed development roadmap and decision log.
 - Honest limitations: Never claim a research gap is novel without verification
 - Open-source preference: Use free and open-source tools wherever practical
 
+## Citation Mechanism and Limitations
+
+**How citations work:**
+- Citations are generated via semantic retrieval AFTER extraction, not from what the LLM actually used during generation
+- For each extracted field, the system performs a separate semantic search over all PDF chunks
+- Retrieved chunks are assigned to citations based on cosine similarity scores
+- The LLM does not output chunk IDs or page numbers; citations are added post-hoc
+
+**Verbatim check (what it does):**
+- For multi-part claims (e.g., "attention, memory, and reasoning"), each component is retrieved separately
+- A component is marked "supported" only if at least one retrieved chunk contains the exact normalized component phrase
+- This prevents cross-component contamination (e.g., "attention" evidence cannot support "memory")
+- The check is conservative: case-insensitive, punctuation-normalized verbatim matching
+
+**Where the verbatim check stops:**
+- It does NOT verify semantic correctness or factual accuracy
+- It does NOT check if the cited passage actually supports the claim
+- A verbatim match only proves the phrase appears in the text, not that the text proves the claim
+- "Not supported by retrieved evidence" means the phrase wasn't found verbatim; it does NOT mean the claim is false
+- Missing verbatim support always triggers `requires_human_review=True`
+- Human review is the only way to verify factual correctness
+
+**Citation traceability vs. factual support:**
+- "Traceable" means: citation exists + page overlaps annotated evidence + sufficiency is not "insufficient"
+- "Traceable" ≠ "factually supported" - the system cannot verify semantic support
+- Page overlap only confirms the citation points to the right region of the paper
+- Users must review source passages to determine if they actually support the claim
+
+## Core vs Auxiliary Components
+
+**Core components (essential for basic PDF-to-analysis workflow):**
+1. PDF extraction (`pdf_processing/text_extractor.py`) - Extracts text from PDFs with page numbers
+2. Text chunking (`chunking/text_chunker.py`) - Splits text into page-aware chunks
+3. Embedding generation (`embeddings/embedding_generator.py`) - Creates vector embeddings for chunks
+4. Semantic retrieval (`retrieval/semantic_retriever.py`) - FAISS-based similarity search
+5. Paper analysis (`analysis/paper_analyzer.py`) - Orchestrates extraction and citation
+6. LLM backends (`analysis/groq_backend.py`, `analysis/gemini_backend.py`) - Hosted LLM integration
+7. Answer generation (`qa/answer_generator.py`) - Evidence-based QA over chunks
+8. Streamlit UI (`app.py`) - User interface
+
+**Auxiliary components (supporting features, not required for basic analysis):**
+1. Job manager (`analysis/job_store.py`) - SQLite background job tracking (not used by Streamlit app)
+2. Search providers (`scholarly_search/crossref_client.py`, `scholarly_search/openalex_client.py`) - Two providers for related-paper discovery (only one needed)
+3. Related paper extractor (`scholarly_search/related_paper_extractor.py`) - Downloads and analyzes related PDFs (optional feature)
+4. Source verifier (`scholarly_search/source_verifier.py`) - Cross-checks metadata against registries (optional validation)
+5. Literature comparator (`analysis/literature_comparator.py`) - Compares findings across papers (optional analysis)
+6. Research gap analyzer (`analysis/research_gap_analyzer.py`) - Identifies conservative follow-up candidates (optional analysis)
+7. Research report generator (`analysis/research_report_generator.py`) - Generates structured reports (optional output)
+8. Validation harness (`validation/step5/`) - End-to-end validation with real papers (development/testing)
+9. Evaluation harness (`evaluation/`) - Gold-set evaluation and metrics (development/testing)
+10. Scholarly search evaluation (`scholarly_search/evaluation.py`) - Provider comparison metrics (development/testing)
+
+**Why these are auxiliary:**
+- The job manager is not used by the Streamlit app; it exists for background processing workflows
+- Having two search providers provides redundancy and comparison, but the system works with just one
+- Related-paper PDF downloading is an optional enhancement for deeper analysis
+- Literature comparison and gap analysis are valuable but not required for single-paper understanding
+- Validation and evaluation harnesses are for development quality assurance, not end-user features
+
+**Minimal viable system:**
+The minimal working system consists of: PDF extraction → chunking → embeddings → retrieval → LLM analysis → Streamlit UI. All other components can be removed without breaking the core single-paper analysis workflow.
+
+**How citations work:**
+- Citations are generated via semantic retrieval AFTER extraction, not from what the LLM actually used during generation
+- For each extracted field, the system performs a separate semantic search over all PDF chunks
+- Retrieved chunks are assigned to citations based on cosine similarity scores
+- The LLM does not output chunk IDs or page numbers; citations are added post-hoc
+
+**Verbatim check (what it does):**
+- For multi-part claims (e.g., "attention, memory, and reasoning"), each component is retrieved separately
+- A component is marked "supported" only if at least one retrieved chunk contains the exact normalized component phrase
+- This prevents cross-component contamination (e.g., "attention" evidence cannot support "memory")
+- The check is conservative: case-insensitive, punctuation-normalized verbatim matching
+
+**Where the verbatim check stops:**
+- It does NOT verify semantic correctness or factual accuracy
+- It does NOT check if the cited passage actually supports the claim
+- A verbatim match only proves the phrase appears in the text, not that the text proves the claim
+- "Not supported by retrieved evidence" means the phrase wasn't found verbatim; it does NOT mean the claim is false
+- Missing verbatim support always triggers `requires_human_review=True`
+- Human review is the only way to verify factual correctness
+
+**Citation traceability vs. factual support:**
+- "Traceable" means: citation exists + page overlaps annotated evidence + sufficiency is not "insufficient"
+- "Traceable" ≠ "factually supported" - the system cannot verify semantic support
+- Page overlap only confirms the citation points to the right region of the paper
+- Users must review source passages to determine if they actually support the claim
+
 ## Installation
 
 ### Prerequisites
@@ -120,6 +208,14 @@ Groq health check succeeded, but it does not validate extraction quality or
 real-paper behavior.
 
 **Latest real-paper validation:** Single-paper validation (attention_is_all_you_need.pdf) completed the Step 5 analyzer with `openai/gpt-oss-20b` after the output cap was raised to 2,048 tokens. The earlier 768-token cap failed on the Transformer paper; the successful request generated 1,133 completion tokens. Measured full-analyzer result: Transformer, 1,803 prompt / 1,326 completion tokens, 9 non-empty fields, 24 citation entries, 68.01 seconds. Validation artifacts are retained in `validation/step5/runs/20261029_review_flag_check/`. This result confirms pipeline completion and parsing for one paper, not factual accuracy or citation support. Human review and full three-paper validation remain necessary.
+
+**Extraction accuracy (gold set evaluation):** 
+- Mean Token-F1: 0.7587 (rough surface-form proxy for string fields + limitations)
+- Mean Set-F1: 0.7000 (authors + evaluation_metrics only)
+- Citation traceability rate: 0.9000 (citations point to correct paper region, not semantic support)
+- Hit Rate @1: 0.7000, @3: 0.9000, @5: 0.9000
+- MRR: 0.8000
+- Based on one annotated paper (attention_is_all_you_need.pdf) evaluated against its gold set in `evaluation/gold_set/`. Token-F1 and set-F1 are surface-form proxies; they do not measure factual correctness. Citation traceability means page overlap + non-empty citation + non-insufficient sufficiency; it does NOT verify that the cited passage semantically supports the extracted claim. Full evaluation requires more annotated papers and human review.
 
 For a one-request connectivity check with a synthetic prompt and no paper
 content, run:
@@ -446,9 +542,29 @@ it can identify exact matches and shared list entries, but does not infer
 semantic equivalence. Different result statements are labelled as distinct,
 not as contradictions. Two or more successfully analyzed sources are required
 for a `completed` comparison; otherwise the result status is
-`insufficient_sources`. At most 20 candidates may be supplied. This is a
-bounded comparison of the available records, not an exhaustive literature
-review, truth assessment, or research-gap/novelty claim.
+
+**Why exact string matching (current approach):**
+- Deterministic and reproducible across runs
+- No external dependencies beyond Python
+- Easy to understand and debug
+- Sufficient for identifying identical values (e.g., same BLEU score, same dataset name)
+- Conservative: never claims a match when one doesn't exist
+
+**Limitations of exact matching:**
+- Free-text LLM output rarely uses identical phrasing
+- Semantically equivalent statements are marked as distinct (e.g., "achieved 28.4 BLEU" vs "reached 28.4 BLEU")
+- Different units or formats won't match (e.g., "28.4" vs "28.4 BLEU")
+- Reordered list items won't match
+
+**What would be better (future improvements):**
+- Embedding similarity: Compare embeddings of extracted values to identify semantic equivalence
+- LLM judge: Use a second LLM call to assess whether two statements convey the same meaning
+- Hybrid approach: Use exact matching for numeric values/datasets, embedding similarity for prose
+- Validation: Train on human-labeled examples of matched vs unmatched statements
+
+**Current limitation:** Related-paper screening by exact title-term overlap also suffers from the same limitation. It is a coarse filter heuristic, not a relevance probability. Future work should evaluate embedding-based screening against human-labeled relevance judgments.
+
+At most 20 candidates may be supplied. This is a bounded comparison of the available records, not an exhaustive literature review, truth assessment, or research-gap/novelty claim.
 
 ## Responsive paper analysis
 
@@ -534,7 +650,7 @@ background job API or stream tokens.
 
 ## License
 
-*To be determined*
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Development Steps
 
