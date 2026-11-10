@@ -60,7 +60,7 @@ These provide additional functionality but are not required for minimal analysis
 
 **Rationale:**
 - Page-aware chunks retain document structure (page numbers)
-- Overlap (50 characters) ensures context is preserved across chunk boundaries
+- Overlap (50 characters by default) ensures context is preserved across chunk boundaries
 - Character-based (not token-based) avoids tokenization complexity
 - Simple and deterministic
 
@@ -71,6 +71,7 @@ These provide additional functionality but are not required for minimal analysis
 
 **Limitation:**
 - Chunk boundaries are arbitrary; some semantic units may be split across chunks
+- Default chunk size is 500 characters (configurable in TextChunker.__init__)
 
 ---
 
