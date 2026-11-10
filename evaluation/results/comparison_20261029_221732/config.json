@@ -1,0 +1,23 @@
+{
+  "timestamp": "20261029_221732",
+  "paper": "attention_is_all_you_need",
+  "pdf_path": "validation/step5/papers\\attention_is_all_you_need.pdf",
+  "paper_analysis": {
+    "title": "Attention Is All You Need",
+    "research_problem": null,
+    "methodology": null,
+    "dataset": null,
+    "evaluation_metrics": null
+  },
+  "max_results": 10,
+  "crossref": {
+    "success": true,
+    "error": null,
+    "result_count": 10
+  },
+  "openalex": {
+    "success": false,
+    "error": "'NoneType' object has no attribute 'get'",
+    "result_count": 0
+  }
+}

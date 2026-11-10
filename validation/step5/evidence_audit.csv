@@ -1,0 +1,78 @@
+paper_name,field_name,extracted_value,evidence_type,evidence_sufficiency,cited_page,chunk_id,supporting_text,automated_assessment,explanation,human_verdict,human_notes
+attention_survey.pdf,title,Sample Paper Title,unknown,insufficient,17-18,attention_survey_chunk_81,"
+Z
+B1/4×B1/4
+|w2|2
+π2(1 −z1
+z2¯t1)2(1 −z2 ¯w2)2ν(t1w2, w2)dV (t1, w2)
+
+≥16−1
+
+Z
+B1/4×B1/4
+π−2|w2|2ν(t1w2, w2)dV (t1, w2)
+ ≥c2⟨|w2|2ν(t1w2, w2)⟩dV
+B1/4×B1/4
+(3.35)
+for some constant c2.",unsupported,"Type: unknown, Sufficiency: insufficient, Review: True",,
+attention_survey.pdf,authors,"['John Doe', 'Jane Smith']",unknown,insufficient,25-25,attention_survey_chunk_118,"zd) = µ1(z1) · · · µd(zd) with zj ∈Cnj for each j,
+∥PΩ∥Lp(Ω,µ) ≲∥P +
+Ω∥Lp(Ω,µ) ≲
+n
+Y
+j=1
+Bp(µj)max{1,
+1
+p−1}.
+For more general weights there are challenges in determining the sharp behavior of the wei",unsupported,"Type: unknown, Sufficiency: insufficient, Review: True",,
+attention_survey.pdf,publication_year,2022,unknown,insufficient,4-5,attention_survey_chunk_25,"heorem 1.2. In Section 4, we give a sharp example for our upper bound estimate. We
+also provide some examples where the upper bound estimates can be explicitly computed.
+In Section 5, we make several ",unsupported,"Type: unknown, Sufficiency: insufficient, Review: True",,
+attention_survey.pdf,abstract,This is a sample abstract.,unknown,insufficient,5-6,attention_survey_chunk_30," Pkrz ∈PkrDk
+j }, k ≥1, j ≥1.
+For k = 0 and j = 1, set c0
+1 ∈K0
+1 to be the origin. For k ≥1, set ck
+j ∈Kk
+j to be the point
+P(k+ 1
+2 )rwk
+j . For α = ck
+j, the set Kα := Kk
+j is referred to as a kube",unsupported,"Type: unknown, Sufficiency: insufficient, Review: True",,
+attention_survey.pdf,research_problem,Sample research problem.,unknown,insufficient,17-18,attention_survey_chunk_81,"
+Z
+B1/4×B1/4
+|w2|2
+π2(1 −z1
+z2¯t1)2(1 −z2 ¯w2)2ν(t1w2, w2)dV (t1, w2)
+
+≥16−1
+
+Z
+B1/4×B1/4
+π−2|w2|2ν(t1w2, w2)dV (t1, w2)
+ ≥c2⟨|w2|2ν(t1w2, w2)⟩dV
+B1/4×B1/4
+(3.35)
+for some constant c2.",unsupported,"Type: unknown, Sufficiency: insufficient, Review: True",,
+attention_survey.pdf,methodology,Sample methodology.,unknown,insufficient,4-5,attention_survey_chunk_25,"heorem 1.2. In Section 4, we give a sharp example for our upper bound estimate. We
+also provide some examples where the upper bound estimates can be explicitly computed.
+In Section 5, we make several ",unsupported,"Type: unknown, Sufficiency: insufficient, Review: True",,
+attention_survey.pdf,dataset,Sample dataset.,unknown,insufficient,27-27,attention_survey_chunk_129,"atistics, Washington University in St.
+Louis, St. Louis, MO 63130-4899, USA
+E-mail address: wick@math.wustl.edu
+",unsupported,"Type: unknown, Sufficiency: insufficient, Review: True",,
+attention_survey.pdf,evaluation_metrics,"['Accuracy', 'F1-score']",unknown,insufficient,27-27,attention_survey_chunk_129,"atistics, Washington University in St.
+Louis, St. Louis, MO 63130-4899, USA
+E-mail address: wick@math.wustl.edu
+",unsupported,"Type: unknown, Sufficiency: insufficient, Review: True",,
+attention_survey.pdf,reported_results,Sample results.,unknown,insufficient,4-5,attention_survey_chunk_25,"heorem 1.2. In Section 4, we give a sharp example for our upper bound estimate. We
+also provide some examples where the upper bound estimates can be explicitly computed.
+In Section 5, we make several ",unsupported,"Type: unknown, Sufficiency: insufficient, Review: True",,
+attention_survey.pdf,limitations,"['Sample limitation 1', 'Sample limitation 2']",unknown,insufficient,19-19,attention_survey_chunk_86,"case gen(η) ≤Nn and gen(γ) > Nm follows from a similar argument with the role
+of γ and η interchanged. Combining all these estimates, we obtain the desired lower bound:
+[µ, ν]p =
+sup
+(γ,η)∈Tm,n
+⟨|w2|2",unsupported,"Type: unknown, Sufficiency: insufficient, Review: True",,

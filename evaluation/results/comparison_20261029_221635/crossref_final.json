@@ -1,0 +1,234 @@
+{
+  "provider": "crossref",
+  "success": true,
+  "error": null,
+  "results": [
+    {
+      "title": "Is Attention All You Need?",
+      "authors": [
+        "Patrick Mineault"
+      ],
+      "year": 2025,
+      "venue": "From Human Attention to Computational Attention",
+      "doi": "10.1007/978-3-031-84300-6_13",
+      "url": "https://doi.org/10.1007/978-3-031-84300-6_13",
+      "abstract": null,
+      "relevance_score": 33.214535,
+      "topic_overlap_score": 1.0,
+      "topic_overlap_terms": [
+        "all",
+        "attention",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "Crossref",
+      "alternate_dois": []
+    },
+    {
+      "title": "Moral Attention Is All You Need",
+      "authors": [
+        "Mark Graves"
+      ],
+      "year": 2025,
+      "venue": "Theology and Science",
+      "doi": "10.1080/14746700.2025.2472118",
+      "url": "https://doi.org/10.1080/14746700.2025.2472118",
+      "abstract": null,
+      "relevance_score": 28.81938,
+      "topic_overlap_score": 0.8,
+      "topic_overlap_terms": [
+        "all",
+        "attention",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "Crossref",
+      "alternate_dois": []
+    },
+    {
+      "title": "Attention Is All You Need [From the Editor]",
+      "authors": [
+        "Anuradha Annaswamy"
+      ],
+      "year": 2026,
+      "venue": "IEEE Control Systems",
+      "doi": "10.1109/mcs.2026.3677901",
+      "url": "https://doi.org/10.1109/mcs.2026.3677901",
+      "abstract": null,
+      "relevance_score": 28.484335,
+      "topic_overlap_score": 0.8,
+      "topic_overlap_terms": [
+        "all",
+        "attention",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "Crossref",
+      "alternate_dois": []
+    },
+    {
+      "title": "All You Need Is LSD",
+      "authors": [
+        "Leo Butler"
+      ],
+      "year": 2018,
+      "venue": "All You Need Is LSD",
+      "doi": "10.5040/9781350101272.00000005",
+      "url": "https://doi.org/10.5040/9781350101272.00000005",
+      "abstract": null,
+      "relevance_score": 31.056498,
+      "topic_overlap_score": 0.75,
+      "topic_overlap_terms": [
+        "all",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "Crossref",
+      "alternate_dois": []
+    },
+    {
+      "title": "All You Need Is Love(s)",
+      "authors": [
+        "Maureen Sie"
+      ],
+      "year": 2018,
+      "venue": "Oxford Scholarship Online",
+      "doi": "10.1093/oso/9780190460723.003.0003",
+      "url": "https://doi.org/10.1093/oso/9780190460723.003.0003",
+      "abstract": "In this chapter, Maureen Sie argues that our nature as loving beings can explain our nature as moral beings. Because love and morality seem to be similar phenomena in many ways, she distinguishes several kinds of loves and explains how they relate to different moral dimensions of our existence, taking as her starting point C. S. Lewis’s work on the subject and renaming his fourth kind of love “kindness.” She argues that recent findings in affective neuroscience suggest that this fourth kind is a natural kind of love. She discusses the dynamics of Lewis’s account, showing that each of the loves that he distinguishes requires the fourth love (kindness) to keep them from taking a nasty turn. She concludes by explaining why this kind of love actually fits the naturalist picture well if the recent finding that oxytocin is involved in our trusting interactions with strangers is correct.",
+      "relevance_score": 28.996393,
+      "topic_overlap_score": 0.6,
+      "topic_overlap_terms": [
+        "all",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "Crossref",
+      "alternate_dois": []
+    },
+    {
+      "title": "Attention All Surveyors: Our Schools Need You",
+      "authors": [
+        "Hilary Davies",
+        "Brenda Jones"
+      ],
+      "year": 1994,
+      "venue": "Structural Survey",
+      "doi": "10.1108/02630809410074466",
+      "url": "https://doi.org/10.1108/02630809410074466",
+      "abstract": null,
+      "relevance_score": 29.293844,
+      "topic_overlap_score": 0.5714285714285714,
+      "topic_overlap_terms": [
+        "all",
+        "attention",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "Crossref",
+      "alternate_dois": []
+    },
+    {
+      "title": "Is attention all you need for intraday Forex trading?",
+      "authors": [
+        "Przemysław Grądzki",
+        "Piotr Wójcik"
+      ],
+      "year": 2024,
+      "venue": "Expert Systems",
+      "doi": "10.1111/exsy.13317",
+      "url": "https://doi.org/10.1111/exsy.13317",
+      "abstract": "Abstract The main objective of this paper is to analyse whether the Transformer neural network, which has become one of the most influential algorithms in Artificial Intelligence over the last few years, exhibits predictive capabilities for high‐frequency Forex data. The prediction task is to classify short‐term Forex movements for six currency pairs and five different time intervals from 60 to 720 min. We find that the Transformer exhibits high predictive power in the context of intraday Forex trading. This performance is slightly better than for the carefully selected benchmark – ResNet‐LSTM, which currently is a state‐of‐the‐art algorithm. Since intraday Forex trading based on deep learning models is largely unexplored, we offer insight on which currency pair and time interval are amenable to devising a profitable trading strategy. We also show that high predictive accuracy can be misleading in real world trading for short time intervals, as models trained on OHLC data tend to report the highest accuracy when the spread cost is the highest. This renders assessment based on typical machine learning metrics overly optimistic. Therefore, it is critical to backtest frequent intraday Forex trading strategies with realistic cost assumptions, which is rarely the case in empirical literature. Lastly, sensitivity analysis shows that the length of the time interval used for training does not play a critical role in the Transformer's predictive capabilities, whereas features derived from technical analysis are essential.",
+      "relevance_score": 28.505598,
+      "topic_overlap_score": 0.5714285714285714,
+      "topic_overlap_terms": [
+        "all",
+        "attention",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "Crossref",
+      "alternate_dois": []
+    },
+    {
+      "title": "Attention Is All You Need: An Analysis Of The Valuation Of Artificial Intelligence Tokens",
+      "authors": [
+        "Mfon Akpan"
+      ],
+      "year": 2024,
+      "venue": null,
+      "doi": "10.2139/ssrn.4993784",
+      "url": "https://doi.org/10.2139/ssrn.4993784",
+      "abstract": "This study discusses the parameters that define the value of artificial intelligence (AI) tokens based on user interaction, their pricing mechanism, and their correlation with the predicted value thus evaluating AI token valuation based on user engagement, pricing, and website visits. This study tests hypotheses that examine the factors that influence the value of AI tokens. Using data from ten AI tokens, the study employs correlation and regression analyses to examine these relationships. The results show that monthly active users (MAU) and website visits significantly predict valuation, while pricing shows a marginal effect. This research provides insights for stakeholders in understanding economic factors affecting AI token values, emphasizing user engagement and pricing strategies.&nbsp;",
+      "relevance_score": 31.404114,
+      "topic_overlap_score": 0.5,
+      "topic_overlap_terms": [
+        "all",
+        "attention",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "Crossref",
+      "alternate_dois": []
+    },
+    {
+      "title": "All You Need is Attention: Lightweight Attention-based Data Augmentation for Text Classification",
+      "authors": [
+        "Junehyung Kim",
+        "Sungjae Hwang"
+      ],
+      "year": 2024,
+      "venue": "Findings of the Association for Computational Linguistics: EMNLP 2024",
+      "doi": "10.18653/v1/2024.findings-emnlp.752",
+      "url": "https://doi.org/10.18653/v1/2024.findings-emnlp.752",
+      "abstract": null,
+      "relevance_score": 29.429165,
+      "topic_overlap_score": 0.4444444444444444,
+      "topic_overlap_terms": [
+        "all",
+        "attention",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "Crossref",
+      "alternate_dois": []
+    },
+    {
+      "title": "Human Gaze is All You Need: Aligning Image Encoders with Human Attention",
+      "authors": [
+        "Anna Antipova",
+        "Ilya Nachevsky",
+        "Mikhail Salamatin",
+        "Anna Izmalkova",
+        "Anna Shestakova"
+      ],
+      "year": 2026,
+      "venue": null,
+      "doi": "10.2139/ssrn.6161005",
+      "url": "https://doi.org/10.2139/ssrn.6161005",
+      "abstract": null,
+      "relevance_score": 28.874254,
+      "topic_overlap_score": 0.4444444444444444,
+      "topic_overlap_terms": [
+        "all",
+        "attention",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "Crossref",
+      "alternate_dois": []
+    }
+  ],
+  "result_count": 10,
+  "requested_max_results": 10
+}

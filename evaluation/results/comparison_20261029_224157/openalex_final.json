@@ -1,0 +1,214 @@
+{
+  "provider": "openalex",
+  "success": true,
+  "error": null,
+  "results": [
+    {
+      "title": "Not All Attention Is All You Need",
+      "authors": [],
+      "year": 2021,
+      "venue": "arXiv (Cornell University)",
+      "doi": "10.48550/arxiv.2104.04692",
+      "url": "https://arxiv.org/pdf/2104.04692",
+      "abstract": null,
+      "relevance_score": 204.44078,
+      "topic_overlap_score": 0.8,
+      "topic_overlap_terms": [
+        "all",
+        "attention",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "OpenAlex",
+      "alternate_dois": []
+    },
+    {
+      "title": "Moral Attention Is All You Need",
+      "authors": [],
+      "year": 2025,
+      "venue": "Theology and Science",
+      "doi": "10.1080/14746700.2025.2472118",
+      "url": "https://www.tandfonline.com/doi/pdf/10.1080/14746700.2025.2472118?needAccess=true",
+      "abstract": null,
+      "relevance_score": 199.83156,
+      "topic_overlap_score": 0.8,
+      "topic_overlap_terms": [
+        "all",
+        "attention",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "OpenAlex",
+      "alternate_dois": []
+    },
+    {
+      "title": "Constant Attention is all you need.",
+      "authors": [],
+      "year": 2025,
+      "venue": "Zenodo (CERN European Organization for Nuclear Research)",
+      "doi": "10.5281/zenodo.17677146",
+      "url": "https://doi.org/10.5281/zenodo.17677146",
+      "abstract": null,
+      "relevance_score": 191.24696,
+      "topic_overlap_score": 0.8,
+      "topic_overlap_terms": [
+        "all",
+        "attention",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "OpenAlex",
+      "alternate_dois": []
+    },
+    {
+      "title": "From \"Attention Is All You Need\" to \"Structure Is All You Need\"",
+      "authors": [],
+      "year": 2026,
+      "venue": "Research Explorer (The University of Manchester)",
+      "doi": "10.5281/zenodo.18244864",
+      "url": "https://research.manchester.ac.uk/en/publications/b24d0f7c-e8a7-42cb-8334-f9e9830e5110",
+      "abstract": null,
+      "relevance_score": 187.16785,
+      "topic_overlap_score": 0.8,
+      "topic_overlap_terms": [
+        "all",
+        "attention",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "OpenAlex",
+      "alternate_dois": []
+    },
+    {
+      "title": "Attention Is All You Need [From the Editor]",
+      "authors": [],
+      "year": 2026,
+      "venue": "IEEE Control Systems",
+      "doi": "10.1109/mcs.2026.3677901",
+      "url": null,
+      "abstract": null,
+      "relevance_score": 181.11479,
+      "topic_overlap_score": 0.8,
+      "topic_overlap_terms": [
+        "all",
+        "attention",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "OpenAlex",
+      "alternate_dois": []
+    },
+    {
+      "title": "从《Attention Is All You Need》到《Structure Is All You Need》",
+      "authors": [],
+      "year": 2026,
+      "venue": "Zenodo (CERN European Organization for Nuclear Research)",
+      "doi": "10.5281/zenodo.18244460",
+      "url": "https://doi.org/10.5281/zenodo.18244460",
+      "abstract": null,
+      "relevance_score": 173.67033,
+      "topic_overlap_score": 0.8,
+      "topic_overlap_terms": [
+        "all",
+        "attention",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "OpenAlex",
+      "alternate_dois": []
+    },
+    {
+      "title": "Attention Is All You Need In Speech Separation",
+      "authors": [],
+      "year": 2021,
+      "venue": "IEEE International Conference on Acoustics Speech and Signal Processing",
+      "doi": "10.1109/icassp39728.2021.9413901",
+      "url": null,
+      "abstract": null,
+      "relevance_score": 260.92264,
+      "topic_overlap_score": 0.6666666666666666,
+      "topic_overlap_terms": [
+        "all",
+        "attention",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "OpenAlex",
+      "alternate_dois": [
+        "10.48550/arxiv.2010.13154"
+      ],
+      "alternate_years": [
+        2020
+      ]
+    },
+    {
+      "title": "Attention Is All You Need: The Rise of the Transformer",
+      "authors": [],
+      "year": 2026,
+      "venue": "Zenodo (CERN European Organization for Nuclear Research)",
+      "doi": "10.5281/zenodo.19225200",
+      "url": "https://doi.org/10.5281/zenodo.19225200",
+      "abstract": null,
+      "relevance_score": 191.2261,
+      "topic_overlap_score": 0.6666666666666666,
+      "topic_overlap_terms": [
+        "all",
+        "attention",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "OpenAlex",
+      "alternate_dois": []
+    },
+    {
+      "title": "Fastformer: Additive Attention is All You Need",
+      "authors": [],
+      "year": 2021,
+      "venue": "arXiv (Cornell University)",
+      "doi": "",
+      "url": "https://arxiv.org/pdf/2108.09084",
+      "abstract": null,
+      "relevance_score": 183.76488,
+      "topic_overlap_score": 0.6666666666666666,
+      "topic_overlap_terms": [
+        "all",
+        "attention",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "OpenAlex",
+      "alternate_dois": []
+    },
+    {
+      "title": "Element-wise Attention Is All You Need",
+      "authors": [],
+      "year": 2025,
+      "venue": "arXiv (Cornell University)",
+      "doi": "10.48550/arxiv.2501.05730",
+      "url": "https://arxiv.org/pdf/2501.05730",
+      "abstract": null,
+      "relevance_score": 183.14958,
+      "topic_overlap_score": 0.6666666666666666,
+      "topic_overlap_terms": [
+        "all",
+        "attention",
+        "need",
+        "you"
+      ],
+      "matched_query": "Attention Is All You Need",
+      "source": "OpenAlex",
+      "alternate_dois": []
+    }
+  ],
+  "result_count": 10,
+  "requested_max_results": 10
+}

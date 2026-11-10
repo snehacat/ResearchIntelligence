@@ -1,0 +1,28 @@
+Step 5 diagnostic execution record — 2026-10-28
+
+No pytest or Ollama process was launched during this diagnostic attempt.
+
+Requested test command:
+.\venv\Scripts\python.exe -m pytest tests/ -v --tb=short
+
+Task-runner result:
+The pytest command did not run. The PowerShell launcher was unavailable
+(pwsh.exe and powershell.exe were not found), and the fallback task runner
+reported: "Task started but no terminal was found for: Requested pytest run".
+
+Workspace test-runner result:
+No tests are available to run through VS Code's test extensions in this
+workspace. No tests were run.
+
+Python execution service result:
+MCP server 'pylance mcp server': failed to initialize MCP client: transport
+failure during send initialize request: Client error: error sending request
+for url (http://localhost:51397/stream)
+
+Consequences:
+- Pytest has no exit code, duration, or test summary for this attempt.
+- Ollama availability, installed model digest, hardware, and current context
+  could not be queried.
+- No new LLM request was made. There is no raw response content or response
+  metadata from this attempt.
+- This file records blocked execution only; it is not raw model output.

@@ -1,0 +1,17 @@
+# PDF Text Extraction Dependencies
+pymupdf>=1.23.0
+
+# Testing Framework
+pytest>=8.0.0
+
+# Embeddings (Step 3)
+sentence-transformers>=2.2.0
+
+# Vector Search (Step 3)
+faiss-cpu>=1.7.0
+
+# Hosted structured generation (Groq)
+groq>=0.31.0
+
+# Student demonstration interface
+streamlit>=1.40.0

@@ -1,0 +1,8 @@
+{
+  "provider": "openalex",
+  "success": false,
+  "error": "'NoneType' object has no attribute 'get'",
+  "results": [],
+  "result_count": 0,
+  "requested_max_results": 10
+}

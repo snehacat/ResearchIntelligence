@@ -1,0 +1,29 @@
+{
+  "crossref": {
+    "precision_at_5": 0.2,
+    "duplicate_rate": null,
+    "metadata_completeness": 0.8833333333333333,
+    "average_topic_overlap": 0.6481746031746032,
+    "provider_coverage": 0,
+    "total_results": 10
+  },
+  "openalex": {
+    "precision_at_5": 0.4,
+    "duplicate_rate": null,
+    "metadata_completeness": 0.6166666666666667,
+    "average_topic_overlap": 0.7466666666666668,
+    "provider_coverage": 0,
+    "total_results": 10
+  },
+  "notes": {
+    "duplicate_rate": "Unavailable - providers do not expose raw candidates before deduplication",
+    "precision_at_5": "Calculated from manual relevance labels",
+    "metadata_completeness": "Calculated from result metadata",
+    "topic_overlap": "Calculated from provider-assigned scores"
+  },
+  "comparison": {
+    "better_precision": "openalex",
+    "better_metadata": "crossref",
+    "higher_coverage": "unavailable"
+  }
+}

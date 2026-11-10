@@ -1,0 +1,47 @@
+{
+  "crossref": {
+    "10.1007/978-3-031-84300-6_13": {
+      "title": "Is Attention All You Need?",
+      "relevant": true
+    },
+    "10.1080/14746700.2025.2472118": {
+      "title": "Moral Attention Is All You Need",
+      "relevant": null
+    },
+    "10.1109/mcs.2026.3677901": {
+      "title": "Attention Is All You Need [From the Editor]",
+      "relevant": false
+    },
+    "10.5040/9781350101272.00000005": {
+      "title": "All You Need Is LSD",
+      "relevant": null
+    },
+    "10.1093/oso/9780190460723.003.0003": {
+      "title": "All You Need Is Love(s)",
+      "relevant": null
+    }
+  },
+  "openalex": {
+    "10.48550/arxiv.2104.04692": {
+      "title": "Not All Attention Is All You Need",
+      "relevant": null
+    },
+    "10.1080/14746700.2025.2472118": {
+      "title": "Moral Attention Is All You Need",
+      "relevant": null
+    },
+    "10.5281/zenodo.17677146": {
+      "title": "Constant Attention is all you need.",
+      "relevant": null
+    },
+    "10.5281/zenodo.18244864": {
+      "title": "From \"Attention Is All You Need\" to \"Structure Is All You Need\"",
+      "relevant": null
+    },
+    "10.1109/mcs.2026.3677901": {
+      "title": "Attention Is All You Need [From the Editor]",
+      "relevant": null
+    }
+  },
+  "instructions": "Mark DOIs as true (relevant), false (irrelevant), or null (uncertain). Only label top 5 results from each provider."
+}

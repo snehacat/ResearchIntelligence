@@ -1,0 +1,664 @@
+{
+  "document_id": "attention_survey",
+  "title": "Sample Paper Title",
+  "authors": [
+    "John Doe",
+    "Jane Smith"
+  ],
+  "publication_year": "2022",
+  "abstract": "This is a sample abstract.",
+  "research_problem": "Sample research problem.",
+  "methodology": "Sample methodology.",
+  "dataset": "Sample dataset.",
+  "evaluation_metrics": [
+    "Accuracy",
+    "F1-score"
+  ],
+  "reported_results": "Sample results.",
+  "limitations": [
+    "Sample limitation 1",
+    "Sample limitation 2"
+  ],
+  "evidence_citations": {
+    "title": {
+      "field_name": "title",
+      "answer_text": "Sample Paper Title",
+      "evidence_chunks": [
+        {
+          "chunk_id": "attention_survey_chunk_81",
+          "document_id": "attention_survey",
+          "chunk_index": 81,
+          "text": "\f\nZ\nB1/4\u00d7B1/4\n|w2|2\n\u03c02(1 \u2212z1\nz2\u00aft1)2(1 \u2212z2 \u00afw2)2\u03bd(t1w2, w2)dV (t1, w2)\n\f\f\f\f\f\n\u226516\u22121\n\f\f\f\f\f\nZ\nB1/4\u00d7B1/4\n\u03c0\u22122|w2|2\u03bd(t1w2, w2)dV (t1, w2)\n\f\f\f\f\f \u2265c2\u27e8|w2|2\u03bd(t1w2, w2)\u27e9dV\nB1/4\u00d7B1/4\n(3.35)\nfor some constant c2. Therefore,\nD2 =\nn\n(z1, z2) \u2208D2 : |PD(|w2|2\u03bd(t1w2, w2)1B1/4\u00d7B1/4)(z1, z2)| > c2\u27e8|z2|2\u03bd(t1z2, z2)\u27e9dV\nB1/4\u00d7B1/4\no\n.\n18\nZHENGHUI HUO AND BRETT D. WICK\nLet B\u2032\n1/4,1/4 denote the set {(w1, w2) \u2208H : ( w1\nw2, w2) \u2208B1/4\u00d7B1/4}. Via the bihomomorphism\nbetween D \u00d7 D\u2217and H, we obtain\n\u00b5p(H) = \u00b5p\n\u001a\n(z1, z2) \u2208H : ",
+          "start_char": 36450,
+          "end_char": 36950,
+          "start_page": 17,
+          "end_page": 18,
+          "chunk_size": 500
+        },
+        {
+          "chunk_id": "attention_survey_chunk_43",
+          "document_id": "attention_survey",
+          "chunk_index": 43,
+          "text": "\u02c6\nK\u2032\n\u03b21,\u03b22\n|f(z1, z2)|\u00b5(z1, z2)dV (z1, z2). (2.15)\nWe set \u27e8f\u27e9Q,\u00b5 :=\nR\nQ |f|d\u00b5\n\u00b5(Q) , then we also have:\nMT \u2032m,n,\u00b5f(w1, w2) =\nsup\n(\u03b21,\u03b22)\u2208Tm\u00d7Tn\n1 \u02c6\nK\u2032\n\u03b21,\u03b22(w1, w2)\u27e8f\u27e9\u02c6\nK\u2032\n\u03b21,\u03b22,\u00b5.\n(2.16)\nWe have the following Lp regularity result for MT \u2032m,n,\u00b5.\nLemma 2.6. Let \u00b5(z1, z2) the same as in Theorem 1.2, then MT \u2032m,n,\u00b5 is bounded on Lp(H, \u00b5)\nfor 1 < p \u2264\u221e. Moreover, \u2225MT \u2032m,n,\u00b5\u2225Lp(H,\u00b5) \u2272(p/(p \u22121))2 for 1 < p < \u221e.\nProof. When p = \u221e, the boundedness of MT \u2032m,n,\u00b5 is obvious. We turn to the case 1 < p < \u221e.\nSe",
+          "start_char": 19350,
+          "end_char": 19850,
+          "start_page": 8,
+          "end_page": 8,
+          "chunk_size": 500
+        },
+        {
+          "chunk_id": "attention_survey_chunk_41",
+          "document_id": "attention_survey",
+          "chunk_index": 41,
+          "text": "respect to the measure \u00b5dV on the set U:\n\u27e8f\u27e9\u00b5dV\nU\n=\nR\nU |f(w1, w2)|\u00b5dV\n\u00b5(U)\n.\n(2.12)\nGiven weights \u00b5 on H and \u03bd = |z2|\u2212p\u2032\u00b5\u2212p\u2032/p, we de\ufb01ne the characteristic of two weights \u00b5, \u03bd\nto be\n[\u00b5, \u03bd]p := sup\nz1,z2\u2208D\u27e8\u00b5|w2|2\u2212p\u27e9du\nT \u2032z1,z2\n\u0010\n\u27e8|w2|2\u03bd\u27e9du\nT \u2032z1,z2\n\u0011p\u22121 .\n(2.13)\nBy Lemmas 2.2 and 2.4, we can replace T \u2032\nz1,z2 by \u02c6K\u2032\n\u03b3,\u03b7 to obtain a quantity of comparable\nsize:\n[\u00b5, \u03bd]p \u2248\nsup\n1\u2264m,n\u2264M\nsup\n(\u03b3,\u03b7)\u2208T \u2032m,n\n\u27e8\u00b5|w2|2\u2212p\u27e9du\n\u02c6\nK\u2032\u03b3,\u03b7\n\u0012\n\u27e8|w2|2\u03bd\u27e9du\n\u02c6\nK\u2032\u03b3,\u03b7\n\u0013p\u22121\n.\n(2.14)\nFrom now on, we will abuse the notations [",
+          "start_char": 18450,
+          "end_char": 18950,
+          "start_page": 8,
+          "end_page": 8,
+          "chunk_size": 500
+        }
+      ],
+      "citations": [
+        {
+          "chunk_id": "attention_survey_chunk_81",
+          "document_id": "attention_survey",
+          "start_page": 17,
+          "end_page": 18
+        },
+        {
+          "chunk_id": "attention_survey_chunk_43",
+          "document_id": "attention_survey",
+          "start_page": 8,
+          "end_page": 8
+        },
+        {
+          "chunk_id": "attention_survey_chunk_41",
+          "document_id": "attention_survey",
+          "start_page": 8,
+          "end_page": 8
+        }
+      ],
+      "evidence_type": "unknown",
+      "evidence_sufficiency": "insufficient",
+      "confidence": 0.10864995668331782,
+      "requires_human_review": true
+    },
+    "authors": {
+      "field_name": "authors",
+      "answer_text": [
+        "John Doe",
+        "Jane Smith"
+      ],
+      "evidence_chunks": [
+        {
+          "chunk_id": "attention_survey_chunk_118",
+          "document_id": "attention_survey",
+          "chunk_index": 118,
+          "text": "zd) = \u00b51(z1) \u00b7 \u00b7 \u00b7 \u00b5d(zd) with zj \u2208Cnj for each j,\n\u2225P\u2126\u2225Lp(\u2126,\u00b5) \u2272\u2225P +\n\u2126\u2225Lp(\u2126,\u00b5) \u2272\nn\nY\nj=1\nBp(\u00b5j)max{1,\n1\np\u22121}.\nFor more general weights there are challenges in determining the sharp behavior of the weight\ncondition in the multiparameter setting and there are additional issues that appear in these\nquestions. We plan to undertake a deeper study of these questions in a forthcoming project.\nReferences\n[APR17]\nA.\nAleman,\nS.\nPott,\nand\nM.\nC.\nReguera.\nThe\nclass\nB\u221e.\n2017.\n(preprint)https://arxiv.org/abs/1",
+          "start_char": 53100,
+          "end_char": 53600,
+          "start_page": 25,
+          "end_page": 25,
+          "chunk_size": 500
+        },
+        {
+          "chunk_id": "attention_survey_chunk_129",
+          "document_id": "attention_survey",
+          "chunk_index": 129,
+          "text": "atistics, Washington University in St.\nLouis, St. Louis, MO 63130-4899, USA\nE-mail address: wick@math.wustl.edu\n",
+          "start_char": 58050,
+          "end_char": 58162,
+          "start_page": 27,
+          "end_page": 27,
+          "chunk_size": 112
+        },
+        {
+          "chunk_id": "attention_survey_chunk_41",
+          "document_id": "attention_survey",
+          "chunk_index": 41,
+          "text": "respect to the measure \u00b5dV on the set U:\n\u27e8f\u27e9\u00b5dV\nU\n=\nR\nU |f(w1, w2)|\u00b5dV\n\u00b5(U)\n.\n(2.12)\nGiven weights \u00b5 on H and \u03bd = |z2|\u2212p\u2032\u00b5\u2212p\u2032/p, we de\ufb01ne the characteristic of two weights \u00b5, \u03bd\nto be\n[\u00b5, \u03bd]p := sup\nz1,z2\u2208D\u27e8\u00b5|w2|2\u2212p\u27e9du\nT \u2032z1,z2\n\u0010\n\u27e8|w2|2\u03bd\u27e9du\nT \u2032z1,z2\n\u0011p\u22121 .\n(2.13)\nBy Lemmas 2.2 and 2.4, we can replace T \u2032\nz1,z2 by \u02c6K\u2032\n\u03b3,\u03b7 to obtain a quantity of comparable\nsize:\n[\u00b5, \u03bd]p \u2248\nsup\n1\u2264m,n\u2264M\nsup\n(\u03b3,\u03b7)\u2208T \u2032m,n\n\u27e8\u00b5|w2|2\u2212p\u27e9du\n\u02c6\nK\u2032\u03b3,\u03b7\n\u0012\n\u27e8|w2|2\u03bd\u27e9du\n\u02c6\nK\u2032\u03b3,\u03b7\n\u0013p\u22121\n.\n(2.14)\nFrom now on, we will abuse the notations [",
+          "start_char": 18450,
+          "end_char": 18950,
+          "start_page": 8,
+          "end_page": 8,
+          "chunk_size": 500
+        }
+      ],
+      "citations": [
+        {
+          "chunk_id": "attention_survey_chunk_118",
+          "document_id": "attention_survey",
+          "start_page": 25,
+          "end_page": 25
+        },
+        {
+          "chunk_id": "attention_survey_chunk_129",
+          "document_id": "attention_survey",
+          "start_page": 27,
+          "end_page": 27
+        },
+        {
+          "chunk_id": "attention_survey_chunk_41",
+          "document_id": "attention_survey",
+          "start_page": 8,
+          "end_page": 8
+        }
+      ],
+      "evidence_type": "unknown",
+      "evidence_sufficiency": "insufficient",
+      "confidence": 0.10495313256978989,
+      "requires_human_review": true
+    },
+    "publication_year": {
+      "field_name": "publication_year",
+      "answer_text": "2022",
+      "evidence_chunks": [
+        {
+          "chunk_id": "attention_survey_chunk_25",
+          "document_id": "attention_survey",
+          "chunk_index": 25,
+          "text": "heorem 1.2. In Section 4, we give a sharp example for our upper bound estimate. We\nalso provide some examples where the upper bound estimates can be explicitly computed.\nIn Section 5, we make several remarks and possible directions for generalization.\nWEIGHTED ESTIMATES FOR THE BERGMAN PROJECTION ON THE HARTOGS TRIANGLE\n5\nAcknowledgments. B. D. Wick\u2019s research is partially supported by National Science Foun-\ndation grants DMS # 1560955 and DMS # 1800057 and Australian Research Council grant\nDP 1",
+          "start_char": 11250,
+          "end_char": 11750,
+          "start_page": 4,
+          "end_page": 5,
+          "chunk_size": 500
+        },
+        {
+          "chunk_id": "attention_survey_chunk_36",
+          "document_id": "attention_survey",
+          "chunk_index": 36,
+          "text": "BERGMAN PROJECTION ON THE HARTOGS TRIANGLE\n7\nthe inequality |K\u03b2| \u2248|Tz|. Since K\u03b2 is a largest kube contained in Tz, all of its ancestors are\nnot contained in Tz. Let k be the generation gen(\u03b2) of \u03b2. Then Tz intersects with at most\ntwo of the Borel subsets {Qk\u22121\nj\n}2k\u22121\nj=1 of S(k\u22121)\u03b8. Let R(k\u22121)r denote the Euclidean distance\nbetween S(k\u22121)r and the origin. The arc length of the set P(k\u22121)rDk\u22121\nj\nequals R(k\u22121)r2\u03c021\u2212k.\nThus the arc length of the intersection set S(k\u22121)r \u2229Tt is less than 2R(k\u22121)r2",
+          "start_char": 16200,
+          "end_char": 16700,
+          "start_page": 7,
+          "end_page": 7,
+          "chunk_size": 500
+        },
+        {
+          "chunk_id": "attention_survey_chunk_120",
+          "document_id": "attention_survey",
+          "chunk_index": 120,
+          "text": "ds pour le projecteur de Bergman dans la boule unit\u00b4e de Cn. Studia\nMath., 71(3):305\u2013323, 1981/82.\n[BS\u00b812]\nD. Barrett and S. S\u00b8ahuto\u02d8glu. Irregularity of the Bergman projection on worm domains in Cn.\nMichigan Math. J., 61(1):187\u2013198, 2012.\n[CC91]\nJ. Chaumat and A.-M. Chollet. R\u00b4egularit\u00b4e h\u00a8old\u00b4erienne de l\u2019op\u00b4erateur \u2202sur le triangle de Hartogs.\nAnnales de l\u2019Institut Fourier, 41(4):867\u2013882, 1991.\n[CD06]\nP. Charpentier and Y. Dupain. Estimates for the Bergman and Szeg\u02ddo projections for pseudo-\nc",
+          "start_char": 54000,
+          "end_char": 54500,
+          "start_page": 26,
+          "end_page": 26,
+          "chunk_size": 500
+        }
+      ],
+      "citations": [
+        {
+          "chunk_id": "attention_survey_chunk_25",
+          "document_id": "attention_survey",
+          "start_page": 4,
+          "end_page": 5
+        },
+        {
+          "chunk_id": "attention_survey_chunk_36",
+          "document_id": "attention_survey",
+          "start_page": 7,
+          "end_page": 7
+        },
+        {
+          "chunk_id": "attention_survey_chunk_120",
+          "document_id": "attention_survey",
+          "start_page": 26,
+          "end_page": 26
+        }
+      ],
+      "evidence_type": "unknown",
+      "evidence_sufficiency": "insufficient",
+      "confidence": 0.12506255010763803,
+      "requires_human_review": true
+    },
+    "abstract": {
+      "field_name": "abstract",
+      "answer_text": "This is a sample abstract.",
+      "evidence_chunks": [
+        {
+          "chunk_id": "attention_survey_chunk_30",
+          "document_id": "attention_survey",
+          "chunk_index": 30,
+          "text": " Pkrz \u2208PkrDk\nj }, k \u22651, j \u22651.\nFor k = 0 and j = 1, set c0\n1 \u2208K0\n1 to be the origin. For k \u22651, set ck\nj \u2208Kk\nj to be the point\nP(k+ 1\n2 )rwk\nj . For \u03b1 = ck\nj, the set K\u03b1 := Kk\nj is referred to as a kube and the point \u03b1 = ck\nj\n6\nZHENGHUI HUO AND BRETT D. WICK\nis the center of the kube. We de\ufb01ne a Bergman tree structure T := {ck\nj} on centers of the\nkubes. We say that ck+1\ni\nis a child of ck\nj if PkrDk+1\ni\n\u2286PkrDk\nj . We say cm\ni \u2265ck\nj if m \u2265k and\nPkrcm\ni \u2208PkrDk\nj . We de\ufb01ne \u02c6K\u03b1 to be the dyadic tent",
+          "start_char": 13500,
+          "end_char": 14000,
+          "start_page": 5,
+          "end_page": 6,
+          "chunk_size": 500
+        },
+        {
+          "chunk_id": "attention_survey_chunk_40",
+          "document_id": "attention_survey",
+          "chunk_index": 40,
+          "text": "\u02c6K\u2032\n\u03b21,\u03b22 on H to be:\nT \u2032\nm,n :=\n\u001a\n(c1, c2) \u2208H :\n\u0012c1\nc2\n, c2\n\u0013\n\u2208Tm \u00d7 Tn\n\u001b\n,\n(2.9)\n\u02c6K\u2032\n\u03b21,\u03b22 :=\n\u001a\n(z1, z2) \u2208H :\n\u0012z1\nz2\n, z2\n\u0013\n\u2208\u02c6K\u03b21 \u00d7 \u02c6K\u03b22\n\u001b\n.\n(2.10)\nSimilarly the induced Carleson tent T \u2032\nz1,z2 on H can be de\ufb01ned by\nT \u2032\nz1,z2 := {(w1, w2) \u2208H :\n\u0012w1\nw2\n, w2\n\u0013\n\u2208Tz1 \u00d7 Tz2}.\n(2.11)\n8\nZHENGHUI HUO AND BRETT D. WICK\nSet du = |w2|\u22122dV . For a weight \u00b5 and a subset U \u2286H, we set \u00b5(U) :=\nR\nU \u00b5dV and let\n\u27e8f\u27e9\u00b5dV\nU\ndenote the average of the function |f| with respect to the measure \u00b5dV on the set U:\n\u27e8f\u27e9\u00b5dV\nU\n",
+          "start_char": 18000,
+          "end_char": 18500,
+          "start_page": 7,
+          "end_page": 8,
+          "chunk_size": 500
+        },
+        {
+          "chunk_id": "attention_survey_chunk_24",
+          "document_id": "attention_survey",
+          "chunk_index": 24,
+          "text": "etting where the domain is related to the unit disc or\nball, such as the polydisc, the product of unit balls, and domains that are biholomorphically\nequivalent to them.\nThe paper is organized as follows: In Section 2, we introduce a dyadic structure on the\nunit disc and a corresponding structure on the Hartogs triangle and provide the results that\nwill be used throughout the paper. In Section 3, we present the dyadic operator Q+\nm,n,\u03bd and\nprove Theorem 1.2. In Section 4, we give a sharp example ",
+          "start_char": 10800,
+          "end_char": 11300,
+          "start_page": 4,
+          "end_page": 4,
+          "chunk_size": 500
+        }
+      ],
+      "citations": [
+        {
+          "chunk_id": "attention_survey_chunk_30",
+          "document_id": "attention_survey",
+          "start_page": 5,
+          "end_page": 6
+        },
+        {
+          "chunk_id": "attention_survey_chunk_40",
+          "document_id": "attention_survey",
+          "start_page": 7,
+          "end_page": 8
+        },
+        {
+          "chunk_id": "attention_survey_chunk_24",
+          "document_id": "attention_survey",
+          "start_page": 4,
+          "end_page": 4
+        }
+      ],
+      "evidence_type": "unknown",
+      "evidence_sufficiency": "insufficient",
+      "confidence": 0.23410050570964813,
+      "requires_human_review": true
+    },
+    "research_problem": {
+      "field_name": "research_problem",
+      "answer_text": "Sample research problem.",
+      "evidence_chunks": [
+        {
+          "chunk_id": "attention_survey_chunk_81",
+          "document_id": "attention_survey",
+          "chunk_index": 81,
+          "text": "\f\nZ\nB1/4\u00d7B1/4\n|w2|2\n\u03c02(1 \u2212z1\nz2\u00aft1)2(1 \u2212z2 \u00afw2)2\u03bd(t1w2, w2)dV (t1, w2)\n\f\f\f\f\f\n\u226516\u22121\n\f\f\f\f\f\nZ\nB1/4\u00d7B1/4\n\u03c0\u22122|w2|2\u03bd(t1w2, w2)dV (t1, w2)\n\f\f\f\f\f \u2265c2\u27e8|w2|2\u03bd(t1w2, w2)\u27e9dV\nB1/4\u00d7B1/4\n(3.35)\nfor some constant c2. Therefore,\nD2 =\nn\n(z1, z2) \u2208D2 : |PD(|w2|2\u03bd(t1w2, w2)1B1/4\u00d7B1/4)(z1, z2)| > c2\u27e8|z2|2\u03bd(t1z2, z2)\u27e9dV\nB1/4\u00d7B1/4\no\n.\n18\nZHENGHUI HUO AND BRETT D. WICK\nLet B\u2032\n1/4,1/4 denote the set {(w1, w2) \u2208H : ( w1\nw2, w2) \u2208B1/4\u00d7B1/4}. Via the bihomomorphism\nbetween D \u00d7 D\u2217and H, we obtain\n\u00b5p(H) = \u00b5p\n\u001a\n(z1, z2) \u2208H : ",
+          "start_char": 36450,
+          "end_char": 36950,
+          "start_page": 17,
+          "end_page": 18,
+          "chunk_size": 500
+        },
+        {
+          "chunk_id": "attention_survey_chunk_16",
+          "document_id": "attention_survey",
+          "chunk_index": 16,
+          "text": "1\np + pp\u2032([\u00b5, \u03bd]1,0\np\n+ [\u00b5, \u03bd]0,1\np ) + (pp\u2032)2([\u00b5, \u03bd]1,1\np )max{1,\n1\np\u22121}\nis \ufb01nite. But they are not quantitatively equivalent. More speci\ufb01cally, [\u00b5, \u03bd]p and the upper\nbound satisfy the following inequalities:\n([\u00b5, \u03bd]p)\n1\np \u2272([\u00b5, \u03bd]0,0\np )\n1\np + pp\u2032([\u00b5, \u03bd]1,0\np\n+ [\u00b5, \u03bd]0,1\np ) + (pp\u2032)2([\u00b5, \u03bd]1,1\np )max{1,\n1\np\u22121 }\n\u2272(pp\u2032)2([\u00b5, \u03bd]p)max{1,\n1\np\u22121 }\n(1.11)\n4\nZHENGHUI HUO AND BRETT D. WICK\nAs one will see in the proof of Theorem 1.2, the products of averages of \u00b5 and \u03bd over di\ufb00erent\ntents will have di\ufb00",
+          "start_char": 7200,
+          "end_char": 7700,
+          "start_page": 3,
+          "end_page": 4,
+          "chunk_size": 500
+        },
+        {
+          "chunk_id": "attention_survey_chunk_87",
+          "document_id": "attention_survey",
+          "chunk_index": 87,
+          "text": " for the case 1 < p \u22642\nhere. The case p > 2 follows from a duality argument. The idea is based on the construction\nof the sharp examples in [PR13] and [RTW17]. Recall B1/4 = {z \u2208C : |z| < 1/4}. Given a\nnumber 1 > s > 0, we set\n\u00b5(w1, w2) = |w2|p\u22122|(1 \u2212w1/w2)(1 \u2212w2)|2(p\u22121)(1\u2212s)\n|w1/w2|2\u2212s|w2|2\u2212s\n,\n(4.1)\nf(w1, w2) = \u00afw2\u00b5\n1\n1\u2212p (w1, w2)1T 1\n2 (w1/w2)1T 1\n2 (w2).\n(4.2)\nThen for (t1, t2) \u2208D2 with T \u2032\nt1,t2 not intersecting the tent T \u2032\n|t1|,|t2| and away from the point\n(0, 0), there holds \u00b5(w1, w2) \u22481",
+          "start_char": 39150,
+          "end_char": 39650,
+          "start_page": 19,
+          "end_page": 19,
+          "chunk_size": 500
+        }
+      ],
+      "citations": [
+        {
+          "chunk_id": "attention_survey_chunk_81",
+          "document_id": "attention_survey",
+          "start_page": 17,
+          "end_page": 18
+        },
+        {
+          "chunk_id": "attention_survey_chunk_16",
+          "document_id": "attention_survey",
+          "start_page": 3,
+          "end_page": 4
+        },
+        {
+          "chunk_id": "attention_survey_chunk_87",
+          "document_id": "attention_survey",
+          "start_page": 19,
+          "end_page": 19
+        }
+      ],
+      "evidence_type": "unknown",
+      "evidence_sufficiency": "insufficient",
+      "confidence": 0.12483076751232147,
+      "requires_human_review": true
+    },
+    "methodology": {
+      "field_name": "methodology",
+      "answer_text": "Sample methodology.",
+      "evidence_chunks": [
+        {
+          "chunk_id": "attention_survey_chunk_25",
+          "document_id": "attention_survey",
+          "chunk_index": 25,
+          "text": "heorem 1.2. In Section 4, we give a sharp example for our upper bound estimate. We\nalso provide some examples where the upper bound estimates can be explicitly computed.\nIn Section 5, we make several remarks and possible directions for generalization.\nWEIGHTED ESTIMATES FOR THE BERGMAN PROJECTION ON THE HARTOGS TRIANGLE\n5\nAcknowledgments. B. D. Wick\u2019s research is partially supported by National Science Foun-\ndation grants DMS # 1560955 and DMS # 1800057 and Australian Research Council grant\nDP 1",
+          "start_char": 11250,
+          "end_char": 11750,
+          "start_page": 4,
+          "end_page": 5,
+          "chunk_size": 500
+        },
+        {
+          "chunk_id": "attention_survey_chunk_119",
+          "document_id": "attention_survey",
+          "chunk_index": 119,
+          "text": "\nclass\nB\u221e.\n2017.\n(preprint)https://arxiv.org/abs/1705.10825.\n[ARS06]\nN. Arcozzi, R. Rochberg, and E. Sawyer. Carleson measures and interpolating sequences for\nBesov spaces on complex balls. Mem. Amer. Math. Soc., 182(859):vi+163, 2006.\n[BB78]\nD. Bekoll\u00b4e and A. Bonami. In\u00b4egalit\u00b4es `a poids pour le noyau de Bergman. C. R. Acad. Sci. Paris\nS\u00b4er. A-B, 286(18):A775\u2013A778, 1978.\n26\nZHENGHUI HUO AND BRETT D. WICK\n[Bek82]\nD. Bekoll\u00b4e. In\u00b4egalit\u00b4e `a poids pour le projecteur de Bergman dans la boule uni",
+          "start_char": 53550,
+          "end_char": 54050,
+          "start_page": 25,
+          "end_page": 26,
+          "chunk_size": 500
+        },
+        {
+          "chunk_id": "attention_survey_chunk_129",
+          "document_id": "attention_survey",
+          "chunk_index": 129,
+          "text": "atistics, Washington University in St.\nLouis, St. Louis, MO 63130-4899, USA\nE-mail address: wick@math.wustl.edu\n",
+          "start_char": 58050,
+          "end_char": 58162,
+          "start_page": 27,
+          "end_page": 27,
+          "chunk_size": 112
+        }
+      ],
+      "citations": [
+        {
+          "chunk_id": "attention_survey_chunk_25",
+          "document_id": "attention_survey",
+          "start_page": 4,
+          "end_page": 5
+        },
+        {
+          "chunk_id": "attention_survey_chunk_119",
+          "document_id": "attention_survey",
+          "start_page": 25,
+          "end_page": 26
+        },
+        {
+          "chunk_id": "attention_survey_chunk_129",
+          "document_id": "attention_survey",
+          "start_page": 27,
+          "end_page": 27
+        }
+      ],
+      "evidence_type": "unknown",
+      "evidence_sufficiency": "insufficient",
+      "confidence": 0.09107631693283717,
+      "requires_human_review": true
+    },
+    "dataset": {
+      "field_name": "dataset",
+      "answer_text": "Sample dataset.",
+      "evidence_chunks": [
+        {
+          "chunk_id": "attention_survey_chunk_129",
+          "document_id": "attention_survey",
+          "chunk_index": 129,
+          "text": "atistics, Washington University in St.\nLouis, St. Louis, MO 63130-4899, USA\nE-mail address: wick@math.wustl.edu\n",
+          "start_char": 58050,
+          "end_char": 58162,
+          "start_page": 27,
+          "end_page": 27,
+          "chunk_size": 112
+        },
+        {
+          "chunk_id": "attention_survey_chunk_118",
+          "document_id": "attention_survey",
+          "chunk_index": 118,
+          "text": "zd) = \u00b51(z1) \u00b7 \u00b7 \u00b7 \u00b5d(zd) with zj \u2208Cnj for each j,\n\u2225P\u2126\u2225Lp(\u2126,\u00b5) \u2272\u2225P +\n\u2126\u2225Lp(\u2126,\u00b5) \u2272\nn\nY\nj=1\nBp(\u00b5j)max{1,\n1\np\u22121}.\nFor more general weights there are challenges in determining the sharp behavior of the weight\ncondition in the multiparameter setting and there are additional issues that appear in these\nquestions. We plan to undertake a deeper study of these questions in a forthcoming project.\nReferences\n[APR17]\nA.\nAleman,\nS.\nPott,\nand\nM.\nC.\nReguera.\nThe\nclass\nB\u221e.\n2017.\n(preprint)https://arxiv.org/abs/1",
+          "start_char": 53100,
+          "end_char": 53600,
+          "start_page": 25,
+          "end_page": 25,
+          "chunk_size": 500
+        },
+        {
+          "chunk_id": "attention_survey_chunk_25",
+          "document_id": "attention_survey",
+          "chunk_index": 25,
+          "text": "heorem 1.2. In Section 4, we give a sharp example for our upper bound estimate. We\nalso provide some examples where the upper bound estimates can be explicitly computed.\nIn Section 5, we make several remarks and possible directions for generalization.\nWEIGHTED ESTIMATES FOR THE BERGMAN PROJECTION ON THE HARTOGS TRIANGLE\n5\nAcknowledgments. B. D. Wick\u2019s research is partially supported by National Science Foun-\ndation grants DMS # 1560955 and DMS # 1800057 and Australian Research Council grant\nDP 1",
+          "start_char": 11250,
+          "end_char": 11750,
+          "start_page": 4,
+          "end_page": 5,
+          "chunk_size": 500
+        }
+      ],
+      "citations": [
+        {
+          "chunk_id": "attention_survey_chunk_129",
+          "document_id": "attention_survey",
+          "start_page": 27,
+          "end_page": 27
+        },
+        {
+          "chunk_id": "attention_survey_chunk_118",
+          "document_id": "attention_survey",
+          "start_page": 25,
+          "end_page": 25
+        },
+        {
+          "chunk_id": "attention_survey_chunk_25",
+          "document_id": "attention_survey",
+          "start_page": 4,
+          "end_page": 5
+        }
+      ],
+      "evidence_type": "unknown",
+      "evidence_sufficiency": "insufficient",
+      "confidence": 0.09155025333166122,
+      "requires_human_review": true
+    },
+    "evaluation_metrics": {
+      "field_name": "evaluation_metrics",
+      "answer_text": [
+        "Accuracy",
+        "F1-score"
+      ],
+      "evidence_chunks": [
+        {
+          "chunk_id": "attention_survey_chunk_129",
+          "document_id": "attention_survey",
+          "chunk_index": 129,
+          "text": "atistics, Washington University in St.\nLouis, St. Louis, MO 63130-4899, USA\nE-mail address: wick@math.wustl.edu\n",
+          "start_char": 58050,
+          "end_char": 58162,
+          "start_page": 27,
+          "end_page": 27,
+          "chunk_size": 112
+        },
+        {
+          "chunk_id": "attention_survey_chunk_63",
+          "document_id": "attention_survey",
+          "chunk_index": 63,
+          "text": "ting (3.14) and (3.15) into (3.13) and (3.9) \ufb01nally yields\nD\nQ1,1\nm,n,\u03bdf, g\u00b5\nE\n\u2272[\u00b5, \u03bd]1,1\np (pp\u2032)2\u2225f\u2225Lp(H,\u03bddV )\u2225g\u2225Lp\u2032(H,\u00b5dV ).\n(3.16)\nTherefore \u2225Q1,1\nm,n,\u03bd\u2225Lp(H,\u03bddV )\u2192Lp(H,\u00b5dV ) \u2272(pp\u2032)2[\u00b5, \u03bd]1,1\np .\nFor the case 1 < p < 2 and we claim that\nD\nQ1,1\nm,n,\u03bdf, g\u00b5\nE\n\u2272([\u00b5, \u03bd]1,1\np )\n1\np\u22121\u2225f\u2225Lp(H,\u03bddV )\u2225g\u2225Lp\u2032(H,\u00b5dV ),\n(3.17)\nfor all f \u2208Lp(H, \u03bddV ) and g \u2208Lp\u2032(H, \u00b5dV ). By the de\ufb01nition of Q1,1\nm,n,\u03bd,\nD\nQ1,1\nm,n,\u03bdf, g\u00b5\nE\n=\n*\nX\n(\u03b3,\u03b7)\u2208T \u2032m,n\n1 \u02c6\nK\u2032\u03b3,\u03b7(w1, w2)|w2|\u22121\u27e8f\u03bd|w2|2\u27e9du\n\u02c6\nK\u2032\u03b3,\u03b7, g\u00b5\n+\n=\nX\n(\u03b3,\u03b7)\u2208T \u2032m,n\n\u001c\n",
+          "start_char": 28350,
+          "end_char": 28850,
+          "start_page": 13,
+          "end_page": 13,
+          "chunk_size": 500
+        },
+        {
+          "chunk_id": "attention_survey_chunk_125",
+          "document_id": "attention_survey",
+          "chunk_index": 125,
+          "text": "McN89]\nJ. D. McNeal. Boundary behavior of the Bergman kernel function in C2. Duke Math. J.,\n58(2):499\u2013512, 1989.\n[McN94a]\nJ. D. McNeal. The Bergman projection as a singular integral operator. J. Geom. Anal., 4(1):91\u2013\n103, 1994.\n[McN94b]\nJ. D. McNeal. Estimates on the Bergman kernels of convex domains. Adv. Math., 109(1):108\u2013139,\n1994.\n[Moe12]\nK. Moen. Sharp weighted bounds without testing or extrapolation. Arch. Math., 99(5):457\u2013466,\nNov 2012.\n[MS94]\nJ. D. McNeal and E. M. Stein. Mapping propert",
+          "start_char": 56250,
+          "end_char": 56750,
+          "start_page": 26,
+          "end_page": 26,
+          "chunk_size": 500
+        }
+      ],
+      "citations": [
+        {
+          "chunk_id": "attention_survey_chunk_129",
+          "document_id": "attention_survey",
+          "start_page": 27,
+          "end_page": 27
+        },
+        {
+          "chunk_id": "attention_survey_chunk_63",
+          "document_id": "attention_survey",
+          "start_page": 13,
+          "end_page": 13
+        },
+        {
+          "chunk_id": "attention_survey_chunk_125",
+          "document_id": "attention_survey",
+          "start_page": 26,
+          "end_page": 26
+        }
+      ],
+      "evidence_type": "unknown",
+      "evidence_sufficiency": "insufficient",
+      "confidence": 0.10105652858813603,
+      "requires_human_review": true
+    },
+    "reported_results": {
+      "field_name": "reported_results",
+      "answer_text": "Sample results.",
+      "evidence_chunks": [
+        {
+          "chunk_id": "attention_survey_chunk_25",
+          "document_id": "attention_survey",
+          "chunk_index": 25,
+          "text": "heorem 1.2. In Section 4, we give a sharp example for our upper bound estimate. We\nalso provide some examples where the upper bound estimates can be explicitly computed.\nIn Section 5, we make several remarks and possible directions for generalization.\nWEIGHTED ESTIMATES FOR THE BERGMAN PROJECTION ON THE HARTOGS TRIANGLE\n5\nAcknowledgments. B. D. Wick\u2019s research is partially supported by National Science Foun-\ndation grants DMS # 1560955 and DMS # 1800057 and Australian Research Council grant\nDP 1",
+          "start_char": 11250,
+          "end_char": 11750,
+          "start_page": 4,
+          "end_page": 5,
+          "chunk_size": 500
+        },
+        {
+          "chunk_id": "attention_survey_chunk_129",
+          "document_id": "attention_survey",
+          "chunk_index": 129,
+          "text": "atistics, Washington University in St.\nLouis, St. Louis, MO 63130-4899, USA\nE-mail address: wick@math.wustl.edu\n",
+          "start_char": 58050,
+          "end_char": 58162,
+          "start_page": 27,
+          "end_page": 27,
+          "chunk_size": 112
+        },
+        {
+          "chunk_id": "attention_survey_chunk_125",
+          "document_id": "attention_survey",
+          "chunk_index": 125,
+          "text": "McN89]\nJ. D. McNeal. Boundary behavior of the Bergman kernel function in C2. Duke Math. J.,\n58(2):499\u2013512, 1989.\n[McN94a]\nJ. D. McNeal. The Bergman projection as a singular integral operator. J. Geom. Anal., 4(1):91\u2013\n103, 1994.\n[McN94b]\nJ. D. McNeal. Estimates on the Bergman kernels of convex domains. Adv. Math., 109(1):108\u2013139,\n1994.\n[Moe12]\nK. Moen. Sharp weighted bounds without testing or extrapolation. Arch. Math., 99(5):457\u2013466,\nNov 2012.\n[MS94]\nJ. D. McNeal and E. M. Stein. Mapping propert",
+          "start_char": 56250,
+          "end_char": 56750,
+          "start_page": 26,
+          "end_page": 26,
+          "chunk_size": 500
+        }
+      ],
+      "citations": [
+        {
+          "chunk_id": "attention_survey_chunk_25",
+          "document_id": "attention_survey",
+          "start_page": 4,
+          "end_page": 5
+        },
+        {
+          "chunk_id": "attention_survey_chunk_129",
+          "document_id": "attention_survey",
+          "start_page": 27,
+          "end_page": 27
+        },
+        {
+          "chunk_id": "attention_survey_chunk_125",
+          "document_id": "attention_survey",
+          "start_page": 26,
+          "end_page": 26
+        }
+      ],
+      "evidence_type": "unknown",
+      "evidence_sufficiency": "insufficient",
+      "confidence": 0.08778144170840581,
+      "requires_human_review": true
+    },
+    "limitations": {
+      "field_name": "limitations",
+      "answer_text": [
+        "Sample limitation 1",
+        "Sample limitation 2"
+      ],
+      "evidence_chunks": [
+        {
+          "chunk_id": "attention_survey_chunk_86",
+          "document_id": "attention_survey",
+          "chunk_index": 86,
+          "text": "case gen(\u03b7) \u2264Nn and gen(\u03b3) > Nm follows from a similar argument with the role\nof \u03b3 and \u03b7 interchanged. Combining all these estimates, we obtain the desired lower bound:\n[\u00b5, \u03bd]p =\nsup\n(\u03b3,\u03b7)\u2208Tm,n\n\u27e8|w2|2\u2212p\u00b5\u27e9du\n\u02c6K\u2032\u03b3,\u03b7\n\u0012\n\u27e8|w2|2\u03bd\u27e9du\n\u02c6\nK\u2032\u03b3,\u03b7\n\u0013p\u22121\n\u2272A2p,\n(3.40)\nwhich completes the proof of Theorem 1.2.\n4. Examples\nWe begin by providing a sharp example for the upper bound estimate in Theorem 1.2.\n4.1. A sharp example for the upper bound. We give an example for the case 1 < p \u22642\nhere. The case p > 2 follow",
+          "start_char": 38700,
+          "end_char": 39200,
+          "start_page": 19,
+          "end_page": 19,
+          "chunk_size": 500
+        },
+        {
+          "chunk_id": "attention_survey_chunk_16",
+          "document_id": "attention_survey",
+          "chunk_index": 16,
+          "text": "1\np + pp\u2032([\u00b5, \u03bd]1,0\np\n+ [\u00b5, \u03bd]0,1\np ) + (pp\u2032)2([\u00b5, \u03bd]1,1\np )max{1,\n1\np\u22121}\nis \ufb01nite. But they are not quantitatively equivalent. More speci\ufb01cally, [\u00b5, \u03bd]p and the upper\nbound satisfy the following inequalities:\n([\u00b5, \u03bd]p)\n1\np \u2272([\u00b5, \u03bd]0,0\np )\n1\np + pp\u2032([\u00b5, \u03bd]1,0\np\n+ [\u00b5, \u03bd]0,1\np ) + (pp\u2032)2([\u00b5, \u03bd]1,1\np )max{1,\n1\np\u22121 }\n\u2272(pp\u2032)2([\u00b5, \u03bd]p)max{1,\n1\np\u22121 }\n(1.11)\n4\nZHENGHUI HUO AND BRETT D. WICK\nAs one will see in the proof of Theorem 1.2, the products of averages of \u00b5 and \u03bd over di\ufb00erent\ntents will have di\ufb00",
+          "start_char": 7200,
+          "end_char": 7700,
+          "start_page": 3,
+          "end_page": 4,
+          "chunk_size": 500
+        },
+        {
+          "chunk_id": "attention_survey_chunk_112",
+          "document_id": "attention_survey",
+          "chunk_index": 112,
+          "text": "Lp(H,\u03bddV ) and \u2225MT \u2032m,n,|w2|\u2212p\u00b5\u2225Lp(H,|z2|\u2212p\u00b5dV ) in the corollary\nabove. To obtain an upper bound estimate, one also needs to understand the dependence of\nthe quantities \u2225MT \u2032m,n,\u03bd\u2225Lp(H,\u03bddV ) and \u2225MT \u2032m,n,|w2|\u2212p\u00b5\u2225Lp(H,|z2|\u2212p\u00b5dV ) on the su\ufb03cient condition\nfor the weight \u03bd and |z2|\u2212p\u00b5.\n2. The example in Section 4.1 showed the upper bound estimate in Theorem 1.2 is sharp. It\nis not clear if the lower bound estimates given in Theorem 1.2, or in [PR13] and [RTW17]\nare sharp.\nIt would be interesting ",
+          "start_char": 50400,
+          "end_char": 50900,
+          "start_page": 24,
+          "end_page": 24,
+          "chunk_size": 500
+        }
+      ],
+      "citations": [
+        {
+          "chunk_id": "attention_survey_chunk_86",
+          "document_id": "attention_survey",
+          "start_page": 19,
+          "end_page": 19
+        },
+        {
+          "chunk_id": "attention_survey_chunk_16",
+          "document_id": "attention_survey",
+          "start_page": 3,
+          "end_page": 4
+        },
+        {
+          "chunk_id": "attention_survey_chunk_112",
+          "document_id": "attention_survey",
+          "start_page": 24,
+          "end_page": 24
+        }
+      ],
+      "evidence_type": "unknown",
+      "evidence_sufficiency": "insufficient",
+      "confidence": 0.16854708393414816,
+      "requires_human_review": true
+    }
+  },
+  "extraction_timestamp": "2026-10-27T12:53:11.378082+00:00"
+}
