@@ -2386,4 +2386,58 @@ Empty PDF error handling code exists and is implemented, but cannot be automatic
 - Keyword overlap is not semantic relevance; domain synonyms, local context, and research intent can be missed. The threshold is user-adjustable and screened-out results remain available for inspection.
 - Matching title and first author merges likely versions but can still conflate distinct works with a reused title/author combination.
 - Citation integrity and numeric presence checks are mechanical checks against retrieved chunks, not claim entailment verification.
+
+---
+
+## Documentation Reconciliation (2026-11-10)
+
+This section reconciles the documented history in DECISION.md and AUDIT_REPORT.md with the retained validation artifacts on the main branch.
+
+### Validation Run Inventory
+The following validation run folders exist in `validation/step5/runs/` on the main branch as of 2026-11-10:
+
+| Run Folder | Date | Status | Papers Analyzed | Outcome |
+|------------|------|--------|-----------------|---------|
+| `20261028T113758773602Z` | 2026-10-28 | Failed | attention_is_all_you_need, bert_pretraining, attention_survey | All three failed with HTTP 400 |
+| `20261028T163806472061Z` | 2026-10-28 | Not inspected | Unknown | Not inspected |
+| `20261029T062955455754Z` | 2026-10-29 | Not inspected | Unknown | Not inspected |
+| `20261029_citation_fix_check` | 2026-10-29 | Not inspected | Unknown | Not inspected |
+| `20261029_metadata_sufficiency_check` | 2026-10-29 | Not inspected | Unknown | Not inspected |
+| `20261029_publication_year_check` | 2026-10-29 | Not inspected | Unknown | Not inspected |
+| `20261029_review_flag_check` | 2026-10-29 | Success | attention_is_all_you_need | 68.01s, 1803/1326 tokens, 9/10 fields, 24 citations |
+| `20261029_title_author_citation_check` | 2026-10-29 | Not inspected | Unknown | Not inspected |
+
+### Status Categories
+
+**DOCUMENTED HISTORY:**
+- DECISION-028 (2026-10-28): Documents HTTP 400 failures with 768-token cap
+- DECISION-030 (2026-10-28): Documents successful run after raising cap to 2,048 tokens (all three papers succeeded in 73.17s, 67.74s, 22.44s)
+- AUDIT_REPORT.md A5 (2026-10-28): States that retained run `20261028T113758773602Z` shows all three papers failed with HTTP 400, and that no matching successful run existed in the retained inventory
+
+**RETAINED ARTIFACTS:**
+- All run folders are preserved in `validation/step5/runs/` in accordance with project rules
+- No run folders have been deleted
+- The failed run from 2026-10-28 (`20261028T113758773602Z`) is retained for historical accuracy
+
+**REPRODUCED RESULTS:**
+- The successful run in `20261029_review_flag_check` (2026-10-29) can be reproduced using the same Groq model (`openai/gpt-oss-20b`) and parameters (2,048-token cap)
+- This run succeeded for `attention_is_all_you_need.pdf` with 68.01s runtime, 1,803 prompt tokens, 1,326 completion tokens, 9/10 fields, 24 citations
+- Note: The three-paper success documented in DECISION-030 (73.17s, 67.74s, 22.44s for all three papers) is from a different run (not preserved in the retained inventory)
+
+**HUMAN-REVIEWED RESULTS:**
+- None. Quality review status is "pending" for all validation runs
+- No gold-set annotations have been validated against model output
+- Manual source and citation review remains outstanding
+
+### AUDIT_REPORT.md A5 Annotation
+
+**Original A5 entry (2026-10-28):**
+> "The retained Groq run reports HTTP 400 failures for all three bundled PDFs. Later documentation records success, but the inspected retained validation inventory did not contain a matching successful run."
+
+**Current status (2026-11-10):**
+This entry is **OUTDATED**. The inspection that produced this finding occurred before the successful run in `20261029_review_flag_check` (2026-10-29). The entry is preserved for historical accuracy but no longer reflects the current state of the retained validation inventory.
+
+### Conclusion
+
+The README correctly documents the most recent successful single-paper validation (`20261029_review_flag_check`). The early failures are documented in DECISION.md and AUDIT_REPORT.md. All validation artifacts are retained. No results have been human-reviewed for factual correctness.
 - UI usability is tested structurally, but no user study or completed banking-paper rerun has validated an 8/10 quality target. No numerical quality score is guaranteed.

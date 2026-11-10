@@ -288,7 +288,7 @@ def run_analysis(
             discovery_status = "completed"
         except Exception as e:
             discovery_status = "failed"
-            discovery_error = str(e)
+            discovery_error = "Crossref or network error occurred"
 
         if related_papers:
             try:
@@ -410,7 +410,7 @@ def _render_sidebar(discover_related_default: bool) -> tuple[bool, float, bool]:
         if api_key_set:
             st.success("GROQ_API_KEY ✓", icon="✅")
         else:
-            st.error("GROQ_API_KEY not set", icon="🔑")
+            st.error("Groq API credentials not configured", icon="🔑")
 
         st.markdown("---")
         with st.expander("About"):
@@ -569,7 +569,7 @@ def _render_related_tab(bundle: Dict[str, Any]) -> None:
     discovery_error = bundle.get("discovery_error")
 
     if discovery_status == "failed":
-        st.error(f"Related-paper search failed: {discovery_error}")
+        st.error("Related-paper search failed. This can happen if Crossref is unavailable or a network issue occurred.")
         st.info("Primary paper analysis is still available in the other tabs.")
         return
     if not bundle.get("related_paper_candidates"):
@@ -875,7 +875,10 @@ def main():
         except ValueError as error:
             st.session_state["research_bundle"] = None
             st.session_state["current_document_id"] = None
-            st.error(f"⚠️ {error}")
+            st.error(
+                "Analysis failed. This can happen if the PDF has no extractable text. "
+                "Please check the PDF format and try again."
+            )
         except Exception:
             st.session_state["research_bundle"] = None
             st.session_state["current_document_id"] = None

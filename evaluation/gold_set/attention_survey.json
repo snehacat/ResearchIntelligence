@@ -1,0 +1,51 @@
+{
+  "document_id": "attention_survey",
+  "source_pdf": "validation/step5/papers/attention_survey.pdf",
+  "annotator": "",
+  "annotation_date": "",
+  "split": "dev",
+  "annotated_without_model_output": false,
+  "notes": "IMPORTANT: Fill this gold annotation by reading the PDF directly. DO NOT view any model output before filling this annotation. The 'annotated_without_model_output' field must be set to 'true' only if you filled this entirely from the PDF without first looking at model extraction results.",
+  "fields": {
+    "title": {
+      "value": "",
+      "evidence_pages": []
+    },
+    "publication_year": {
+      "value": "",
+      "evidence_pages": []
+    },
+    "abstract": {
+      "value": "",
+      "evidence_pages": []
+    },
+    "research_problem": {
+      "value": "",
+      "evidence_pages": []
+    },
+    "methodology": {
+      "value": "",
+      "evidence_pages": []
+    },
+    "dataset": {
+      "value": "",
+      "evidence_pages": []
+    },
+    "reported_results": {
+      "value": "",
+      "evidence_pages": []
+    },
+    "authors": {
+      "value": [],
+      "evidence_pages": []
+    },
+    "evaluation_metrics": {
+      "value": [],
+      "evidence_pages": []
+    },
+    "limitations": {
+      "value": [],
+      "evidence_pages": []
+    }
+  }
+}

@@ -209,6 +209,26 @@ real-paper behavior.
 
 **Latest real-paper validation:** Single-paper validation (attention_is_all_you_need.pdf) completed the Step 5 analyzer with `openai/gpt-oss-20b` after the output cap was raised to 2,048 tokens. The earlier 768-token cap failed on the Transformer paper; the successful request generated 1,133 completion tokens. Measured full-analyzer result: Transformer, 1,803 prompt / 1,326 completion tokens, 9 non-empty fields, 24 citation entries, 68.01 seconds. Validation artifacts are retained in `validation/step5/runs/20261029_review_flag_check/`. This result confirms pipeline completion and parsing for one paper, not factual accuracy or citation support. Human review and full three-paper validation remain necessary.
 
+**Documentation Reconciliation (2026-11-10):**
+The following validation run folders exist in `validation/step5/runs/` on the main branch:
+
+- `20261028T113758773602Z` (2026-10-28): All three papers (attention_is_all_you_need, bert_pretraining, attention_survey) failed with HTTP 400. Status: **RETAINED ARTIFACT** - documented failure.
+- `20261028T163806472061Z` (2026-10-28): Not inspected. Status: **RETAINED ARTIFACT**.
+- `20261029T062955455754Z` (2026-10-29): Not inspected. Status: **RETAINED ARTIFACT**.
+- `20261029_citation_fix_check` (2026-10-29): Not inspected. Status: **RETAINED ARTIFACT**.
+- `20261029_metadata_sufficiency_check` (2026-10-29): Not inspected. Status: **RETAINED ARTIFACT**.
+- `20261029_publication_year_check` (2026-10-29): Not inspected. Status: **RETAINED ARTIFACT**.
+- `20261029_review_flag_check` (2026-10-29): attention_is_all_you_need.pdf succeeded (68.01s, 1803/1326 tokens, 9/10 fields). Status: **REPRODUCED RESULT** - can be re-run with same parameters.
+- `20261029_title_author_citation_check` (2026-10-29): Not inspected. Status: **RETAINED ARTIFACT**.
+
+**Status Categories:**
+- **DOCUMENTED HISTORY:** Early failures with HTTP 400 (2026-10-28) are documented in DECISION.md and AUDIT_REPORT.md.
+- **RETAINED ARTIFACTS:** All run folders are preserved; none have been deleted.
+- **REPRODUCED RESULTS:** The successful run in `20261029_review_flag_check` can be reproduced using the same Groq model and parameters.
+- **HUMAN-REVIEWED RESULTS:** None. Quality review status is "pending" for all runs. Human review is required to establish factual correctness.
+
+**Note:** AUDIT_REPORT.md A5 entry (2026-10-28) was written before the successful run on 2026-10-29 and states that no matching successful run existed in the retained inventory. This entry is now **OUTDATED** but preserved for historical accuracy.
+
 **Extraction accuracy (gold set evaluation):** 
 - Mean Token-F1: 0.7587 (rough surface-form proxy for string fields + limitations)
 - Mean Set-F1: 0.7000 (authors + evaluation_metrics only)

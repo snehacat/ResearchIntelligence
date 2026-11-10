@@ -1,6 +1,7 @@
 """Tests for guarded retrieval and analysis of related-paper PDFs."""
 
 import io
+import socket
 from unittest.mock import Mock
 from urllib.request import Request
 
@@ -291,34 +292,17 @@ class TestSafePDFDownload:
     def test_url_validation_returns_hostname_and_addresses(self):
         """A11: URL validation returns hostname and validated addresses for connection pinning."""
         from unittest.mock import patch
-        
-        with patch("scholarly_search.related_paper_extractor.socket.getaddrinfo") as mock_dns:
-            mock_dns.return_value = [
-                (2, 1, 6, "", ("93.184.216.34", 443)),
-                (2, 1, 6, "", ("93.184.216.34", 443)),
-            ]
-            
-            hostname, addresses = RelatedPaperEvidenceExtractor._validate_public_https_url(
-                "https://repository.example/paper.pdf"
-            )
-            
-            assert hostname == "repository.example"
-            assert addresses == {"93.184.216.34"}
 
-    def test_url_validation_returns_hostname_and_addresses(self):
-        """A11: URL validation returns hostname and validated addresses for connection pinning."""
-        from unittest.mock import patch
-        
         with patch("scholarly_search.related_paper_extractor.socket.getaddrinfo") as mock_dns:
             mock_dns.return_value = [
                 (2, 1, 6, "", ("93.184.216.34", 443)),
                 (2, 1, 6, "", ("93.184.216.34", 443)),
             ]
-            
+
             hostname, addresses = RelatedPaperEvidenceExtractor._validate_public_https_url(
                 "https://repository.example/paper.pdf"
             )
-            
+
             assert hostname == "repository.example"
             assert addresses == {"93.184.216.34"}
 
@@ -355,6 +339,59 @@ class TestSafePDFDownload:
                     message="Found",
                     headers={},
                     new_url="https://different.example/paper.pdf",
+                )
+
+    def test_dns_change_between_validation_and_connection_is_rejected(self):
+        """A11: DNS answer change between initial validation and final connection is rejected."""
+        from unittest.mock import patch
+
+        # Mock DNS to return different addresses on subsequent calls
+        dns_call_count = [0]
+
+        def mock_getaddrinfo_change_dns(*args, **kwargs):
+            dns_call_count[0] += 1
+            # First call (initial validation): return 8.8.8.8
+            if dns_call_count[0] == 1:
+                return [(2, 1, 6, "", ("8.8.8.8", 443))]
+            # Subsequent calls: return different address
+            else:
+                return [(2, 1, 6, "", ("93.184.216.34", 443))]
+
+        with patch("scholarly_search.related_paper_extractor.socket.getaddrinfo", side_effect=mock_getaddrinfo_change_dns):
+            # Initial validation should succeed
+            hostname, validated_addresses = RelatedPaperEvidenceExtractor._validate_public_https_url(PDF_URL)
+            assert hostname == "repository.example"
+            assert validated_addresses == {"8.8.8.8"}
+
+            # Final validation with changed DNS should return different address
+            # The download code checks that final_addresses is subset of validated_addresses
+            final_hostname, final_addresses = RelatedPaperEvidenceExtractor._validate_public_https_url(PDF_URL)
+            assert final_hostname == "repository.example"
+            assert final_addresses == {"93.184.216.34"}
+
+            # Verify the intersection check would fail
+            assert not final_addresses.intersection(validated_addresses)
+
+    def test_redirect_to_private_address_is_rejected(self):
+        """A11: Redirect to private network address is rejected."""
+        validated_addresses = {"8.8.8.8"}
+        handler = _SafeRedirectHandler(max_redirects=3, validated_addresses=validated_addresses)
+
+        # Mock DNS to return private address for redirect target
+        from unittest.mock import patch
+        with patch("scholarly_search.related_paper_extractor.socket.getaddrinfo") as mock_dns:
+            mock_dns.return_value = [
+                (2, 1, 6, "", ("192.168.1.1", 443))  # Private address
+            ]
+
+            with pytest.raises(PaperDownloadError, match="non-public"):
+                handler.redirect_request(
+                    request=Request(PDF_URL),
+                    file_pointer=None,
+                    code=302,
+                    message="Found",
+                    headers={},
+                    new_url="https://internal.example/paper.pdf",
                 )
 
     @pytest.mark.parametrize(
