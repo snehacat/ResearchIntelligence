@@ -1,15 +1,19 @@
 """Safely retrieve and analyze provider-listed open-access related papers."""
 
 import hashlib
+import http.client
 import ipaddress
 import socket
 import time
 from datetime import datetime, timezone
+from functools import partial
 from typing import Any, Callable, Dict, List, Mapping, Optional, Protocol, Tuple
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
 from urllib.request import (
     HTTPRedirectHandler,
+    HTTPSHandler,
+    ProxyHandler,
     Request,
     build_opener,
 )
@@ -36,12 +40,63 @@ class _PaperAnalyzer(Protocol):
     ) -> Dict[str, Any]: ...
 
 
+class _PinnedHTTPSConnection(http.client.HTTPSConnection):
+    def __init__(
+        self, host: str, validated_addresses: set, **kwargs: Any
+    ) -> None:
+        self.validated_addresses = tuple(sorted(validated_addresses))
+        if not self.validated_addresses:
+            raise PaperDownloadError("PDF host has no validated addresses")
+        super().__init__(host, **kwargs)
+
+    def connect(self) -> None:
+        errors = []
+        for address in self.validated_addresses:
+            raw_socket = None
+            try:
+                raw_socket = socket.create_connection(
+                    (address, self.port), self.timeout, self.source_address
+                )
+                self.sock = self._context.wrap_socket(
+                    raw_socket, server_hostname=self.host
+                )
+                return
+            except OSError as error:
+                errors.append(error)
+                if raw_socket is not None:
+                    raw_socket.close()
+        raise OSError("Could not connect to any validated PDF host address") from errors[-1]
+
+
+class _PinnedHTTPSHandler(HTTPSHandler):
+    def __init__(self, addresses_by_host: Dict[str, set]) -> None:
+        super().__init__()
+        self.addresses_by_host = addresses_by_host
+
+    def https_open(self, request: Request):
+        hostname = urlsplit(request.full_url).hostname
+        addresses = self.addresses_by_host.get(hostname.lower()) if hostname else None
+        if not addresses:
+            raise PaperDownloadError("PDF host was not validated before connection")
+        connection_class = partial(
+            _PinnedHTTPSConnection, validated_addresses=addresses
+        )
+        return self.do_open(
+            connection_class,
+            request,
+            context=self._context,
+            check_hostname=self._check_hostname,
+        )
+
+
 class _SafeRedirectHandler(HTTPRedirectHandler):
-    def __init__(self, max_redirects: int, validated_addresses: set) -> None:
+    def __init__(
+        self, max_redirects: int, addresses_by_host: Dict[str, set]
+    ) -> None:
         super().__init__()
         self.max_redirects = max_redirects
         self.redirect_count = 0
-        self.validated_addresses = validated_addresses
+        self.addresses_by_host = addresses_by_host
 
     def redirect_request(
         self,
@@ -55,12 +110,10 @@ class _SafeRedirectHandler(HTTPRedirectHandler):
         self.redirect_count += 1
         if self.redirect_count > self.max_redirects:
             raise PaperDownloadError("PDF download exceeded the redirect limit")
-        # A11: Validate redirect target against original validated addresses
-        _, redirect_addresses = RelatedPaperEvidenceExtractor._validate_public_https_url(new_url)
-        if not redirect_addresses.intersection(self.validated_addresses):
-            raise PaperDownloadError(
-                "Redirect resolved to an address not in the originally validated set"
-            )
+        hostname, redirect_addresses = (
+            RelatedPaperEvidenceExtractor._validate_public_https_url(new_url)
+        )
+        self.addresses_by_host[hostname.lower()] = redirect_addresses
         return super().redirect_request(
             request, file_pointer, code, message, headers, new_url
         )
@@ -284,8 +337,8 @@ class RelatedPaperEvidenceExtractor:
         }
 
     def _download_pdf(self, url: str) -> bytes:
-        # A11: Validate URL and get validated addresses BEFORE connection
         hostname, validated_addresses = self._validate_public_https_url(url)
+        addresses_by_host = {hostname.lower(): validated_addresses}
         
         request = Request(
             url,
@@ -294,21 +347,22 @@ class RelatedPaperEvidenceExtractor:
                 "User-Agent": "ResearchIntelligence/0.1 (open-access PDF retrieval)",
             },
         )
-        # A11: Use safe redirect handler that validates each redirect target
-        opener = build_opener(_SafeRedirectHandler(
-            self.MAX_REDIRECTS, 
-            validated_addresses
-        ))
+        opener = build_opener(
+            ProxyHandler({}),
+            _SafeRedirectHandler(self.MAX_REDIRECTS, addresses_by_host),
+            _PinnedHTTPSHandler(addresses_by_host),
+        )
         started_at = time.perf_counter()
         try:
             with opener.open(request, timeout=self.timeout) as response:
                 final_url = response.geturl()
-                # A11: Re-validate final URL after redirects
-                final_hostname, final_addresses = self._validate_public_https_url(final_url)
-                # A11: Ensure final address is in originally validated set (DNS change check)
-                if not final_addresses.intersection(validated_addresses):
+                final_hostname = urlsplit(final_url).hostname
+                if (
+                    not final_hostname
+                    or final_hostname.lower() not in addresses_by_host
+                ):
                     raise PaperDownloadError(
-                        "Redirect resolved to an address not in the originally validated set"
+                        "Final PDF host was not validated before connection"
                     )
                 content_type = response.headers.get(
                     "Content-Type", ""

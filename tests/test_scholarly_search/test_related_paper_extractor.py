@@ -10,6 +10,7 @@ import pytest
 
 from scholarly_search.related_paper_extractor import (
     PaperDownloadError,
+    _PinnedHTTPSConnection,
     RelatedPaperEvidenceExtractor,
     _SafeRedirectHandler,
 )
@@ -248,7 +249,7 @@ class TestSafePDFDownload:
         self._allow_public_dns(monkeypatch)
         monkeypatch.setattr(
             "scholarly_search.related_paper_extractor.build_opener",
-            lambda handler: opener,
+            lambda *handlers: opener,
         )
 
         downloaded = extractor._download_pdf(PDF_URL)
@@ -307,7 +308,7 @@ class TestSafePDFDownload:
             assert addresses == {"93.184.216.34"}
 
     def test_redirect_handler_rejects_insecure_redirects(self):
-        handler = _SafeRedirectHandler(max_redirects=3, validated_addresses=set())
+        handler = _SafeRedirectHandler(max_redirects=3, addresses_by_host={})
         with pytest.raises(PaperDownloadError, match="HTTPS"):
             handler.redirect_request(
                 request=Request(PDF_URL),
@@ -318,64 +319,85 @@ class TestSafePDFDownload:
                 new_url="http://internal.example/paper.pdf",
             )
 
-    def test_redirect_handler_rejects_redirect_to_unvalidated_address(self):
-        """A11: Redirect to address not in original validated set is rejected."""
-        # Simulate original validation returned 8.8.8.8
-        validated_addresses = {"8.8.8.8"}
-        handler = _SafeRedirectHandler(max_redirects=3, validated_addresses=validated_addresses)
-        
-        # Mock DNS to return different public address for redirect target
-        from unittest.mock import patch
-        with patch("scholarly_search.related_paper_extractor.socket.getaddrinfo") as mock_dns:
-            mock_dns.return_value = [
-                (2, 1, 6, "", ("93.184.216.34", 443))  # Different public address
-            ]
-            
-            with pytest.raises(PaperDownloadError, match="not in the originally validated set"):
-                handler.redirect_request(
-                    request=Request(PDF_URL),
-                    file_pointer=None,
-                    code=302,
-                    message="Found",
-                    headers={},
-                    new_url="https://different.example/paper.pdf",
-                )
-
-    def test_dns_change_between_validation_and_connection_is_rejected(self):
-        """A11: DNS answer change between initial validation and final connection is rejected."""
+    def test_redirect_target_is_validated_and_pinned_before_following(self):
         from unittest.mock import patch
 
-        # Mock DNS to return different addresses on subsequent calls
-        dns_call_count = [0]
+        addresses_by_host = {"repository.example": {"8.8.8.8"}}
+        handler = _SafeRedirectHandler(
+            max_redirects=3, addresses_by_host=addresses_by_host
+        )
+        with patch(
+            "scholarly_search.related_paper_extractor.socket.getaddrinfo",
+            return_value=[(2, 1, 6, "", ("93.184.216.34", 443))],
+        ) as mock_dns:
+            redirected = handler.redirect_request(
+                request=Request(PDF_URL),
+                file_pointer=None,
+                code=302,
+                message="Found",
+                headers={},
+                new_url="https://different.example/paper.pdf",
+            )
 
-        def mock_getaddrinfo_change_dns(*args, **kwargs):
-            dns_call_count[0] += 1
-            # First call (initial validation): return 8.8.8.8
-            if dns_call_count[0] == 1:
-                return [(2, 1, 6, "", ("8.8.8.8", 443))]
-            # Subsequent calls: return different address
-            else:
-                return [(2, 1, 6, "", ("93.184.216.34", 443))]
+        assert redirected.full_url == "https://different.example/paper.pdf"
+        assert mock_dns.call_count == 1
+        assert addresses_by_host["different.example"] == {"93.184.216.34"}
 
-        with patch("scholarly_search.related_paper_extractor.socket.getaddrinfo", side_effect=mock_getaddrinfo_change_dns):
-            # Initial validation should succeed
-            hostname, validated_addresses = RelatedPaperEvidenceExtractor._validate_public_https_url(PDF_URL)
-            assert hostname == "repository.example"
-            assert validated_addresses == {"8.8.8.8"}
+    def test_connection_uses_validated_ip_when_dns_answer_changes(self, monkeypatch):
+        """A11: TCP uses the validated address and TLS retains the original host."""
+        dns_answers = [
+            [(2, 1, 6, "", ("8.8.8.8", 443))],
+            [(2, 1, 6, "", ("93.184.216.34", 443))],
+        ]
+        dns_calls = []
 
-            # Final validation with changed DNS should return different address
-            # The download code checks that final_addresses is subset of validated_addresses
-            final_hostname, final_addresses = RelatedPaperEvidenceExtractor._validate_public_https_url(PDF_URL)
-            assert final_hostname == "repository.example"
-            assert final_addresses == {"93.184.216.34"}
+        def fake_getaddrinfo(host, *args, **kwargs):
+            dns_calls.append(host)
+            return dns_answers[len(dns_calls) - 1]
 
-            # Verify the intersection check would fail
-            assert not final_addresses.intersection(validated_addresses)
+        monkeypatch.setattr(
+            "scholarly_search.related_paper_extractor.socket.getaddrinfo",
+            fake_getaddrinfo,
+        )
+        hostname, validated_addresses = (
+            RelatedPaperEvidenceExtractor._validate_public_https_url(PDF_URL)
+        )
+        assert hostname == "repository.example"
+        assert validated_addresses == {"8.8.8.8"}
+
+        connected_to = []
+        raw_socket = Mock()
+        monkeypatch.setattr(
+            "scholarly_search.related_paper_extractor.socket.create_connection",
+            lambda address, timeout, source_address: (
+                connected_to.append(address) or raw_socket
+            ),
+        )
+
+        class FakeTLSContext:
+            server_hostname = None
+
+            def wrap_socket(self, sock, server_hostname):
+                self.server_hostname = server_hostname
+                return sock
+
+        context = FakeTLSContext()
+        connection = _PinnedHTTPSConnection(
+            hostname, validated_addresses=validated_addresses
+        )
+        connection._context = context
+        connection.connect()
+
+        assert connected_to == [("8.8.8.8", 443)]
+        assert context.server_hostname == "repository.example"
+        assert dns_calls == ["repository.example"]
+        connection.close()
 
     def test_redirect_to_private_address_is_rejected(self):
         """A11: Redirect to private network address is rejected."""
-        validated_addresses = {"8.8.8.8"}
-        handler = _SafeRedirectHandler(max_redirects=3, validated_addresses=validated_addresses)
+        handler = _SafeRedirectHandler(
+            max_redirects=3, addresses_by_host={"repository.example": {"8.8.8.8"}}
+        )
 
         # Mock DNS to return private address for redirect target
         from unittest.mock import patch
@@ -408,7 +430,7 @@ class TestSafePDFDownload:
         opener = FakeOpener(FakeResponse(content, content_type))
         monkeypatch.setattr(
             "scholarly_search.related_paper_extractor.build_opener",
-            lambda handler: opener,
+            lambda *handlers: opener,
         )
 
         with pytest.raises(PaperDownloadError, match=message):
@@ -421,7 +443,7 @@ class TestSafePDFDownload:
         opener = FakeOpener(FakeResponse(content))
         monkeypatch.setattr(
             "scholarly_search.related_paper_extractor.build_opener",
-            lambda handler: opener,
+            lambda *handlers: opener,
         )
 
         with pytest.raises(PaperDownloadError, match="size limit"):
