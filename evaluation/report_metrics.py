@@ -16,7 +16,7 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List
 
-from evaluation.gold_set_schema import load_annotation, validate_annotation
+from evaluation.gold_set_schema import validate_annotation
 from evaluation.metrics import evaluate_paper, HarnessResult
 
 
@@ -30,7 +30,16 @@ def load_gold_annotations(gold_dir: Path) -> Dict[str, Dict[str, Any]]:
     annotations = {}
     for json_file in gold_dir.glob("*.json"):
         try:
-            annotation = load_annotation(json_file)
+            with open(json_file, "r", encoding="utf-8") as file:
+                annotation = json.load(file)
+            if (
+                isinstance(annotation, dict)
+                and len(annotation) == 1
+                and isinstance(annotation.get("TODO"), str)
+            ):
+                print(f"TODO: {json_file.name}: {annotation['TODO']}")
+                continue
+            validate_annotation(annotation, json_file.stem)
             document_id = annotation["document_id"]
             annotations[document_id] = annotation
         except Exception as e:
@@ -47,6 +56,8 @@ def count_filled_annotations(annotations: Dict[str, Dict[str, Any]]) -> int:
         # Check if any field has a non-empty value
         has_value = False
         for field_data in fields.values():
+            if not isinstance(field_data, dict):
+                continue
             value = field_data.get("value")
             if value is not None:
                 if isinstance(value, str) and value.strip():
@@ -104,15 +115,19 @@ def main():
 
     # Load gold annotations
     gold_annotations = load_gold_annotations(args.gold_dir)
-    n_papers = len(gold_annotations)
-    n_filled_papers = count_filled_annotations(gold_annotations)
+    filled_annotations = {
+        document_id: annotation
+        for document_id, annotation in gold_annotations.items()
+        if count_filled_annotations({document_id: annotation})
+    }
+    n_papers = len(filled_annotations)
 
     # Load validation results
     validation_results = load_validation_results(args.run_dir)
 
     # Count total fields
     n_fields = 0
-    for annotation in gold_annotations.values():
+    for annotation in filled_annotations.values():
         n_fields += len(annotation.get("fields", {}))
 
     # Print header
@@ -121,16 +136,15 @@ def main():
     print("=" * 70)
     print()
 
-    print(f"n_papers (total gold files): {n_papers}")
-    print(f"n_papers (filled annotations): {n_filled_papers}")
+    print(f"n_papers (filled annotations): {n_papers}")
     print(f"n_fields: {n_fields}")
     print()
 
-    if n_filled_papers < 5:
+    if n_papers < 5:
         print("=" * 70)
         print("WARNING: Small sample size")
         print("=" * 70)
-        print(f"Only {n_filled_papers} paper(s) have filled gold annotations.")
+        print(f"Only {n_papers} paper(s) have filled gold annotations.")
         print("Metrics may not be representative of general system performance.")
         print("Expand the gold set to at least 5 filled papers before making")
         print("broad accuracy claims.")
@@ -138,7 +152,7 @@ def main():
 
     # Evaluate each paper that has both gold and results
     paper_results = []
-    for document_id, gold in gold_annotations.items():
+    for document_id, gold in filled_annotations.items():
         if document_id not in validation_results:
             print(f"Warning: No validation result found for {document_id}")
             continue
