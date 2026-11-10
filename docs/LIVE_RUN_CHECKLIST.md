@@ -32,7 +32,7 @@ This checklist provides exact commands to run the three-paper validation with yo
 Run the validation harness for all three bundled papers:
 
 ```powershell
-python validation/step5/run_validation.py --confirm-costs
+python validation/step5/run_validation.py --backend groq --confirm-public-papers --confirm-groq-costs
 ```
 
 **What this does:**
@@ -140,10 +140,10 @@ notepad validation/step5/runs/YOUR_RUN_DIRECTORY/evidence_audit.csv
 - Three papers: ~10,500 tokens total
 - Cost: Typically < $0.01 (check Groq pricing for current rates)
 
-**The `--confirm-costs` flag:**
-- Requires you to confirm before making any API calls
+**The `--confirm-public-papers --confirm-groq-costs` flags:**
+- Require you to confirm before making any API calls
 - Prevents accidental charges
-- Shows estimated cost if available
+- Confirms both that PDFs may be sent to a hosted provider and that Groq charges may apply
 
 ---
 

@@ -226,6 +226,8 @@ These provide additional functionality but are not required for minimal analysis
 
 8. **Job manager not integrated:** SQLite job manager exists as backend API but is not used by Streamlit UI (synchronous flow).
 
+9. **DNS re-resolution gap (mitigated, not eliminated):** The related-paper downloader validates URLs before connection and checks that the final address is in the originally validated set. However, urllib re-resolves DNS at connect time, and the intersection check runs after the request was already sent. This is a mitigation that catches many cases but does not implement true IP pinning (connecting to the validated IP while preserving hostname for SNI and certificate verification). The remaining gap is that a very fast DNS change during the connection window could theoretically bypass the check.
+
 ### UNVERIFIED Components
 
 1. **Live related-paper LLM output:** Related-paper extraction runs LLM analysis on downloaded PDFs, but this output has not been human-reviewed for accuracy.
@@ -345,7 +347,7 @@ The implementation isolates failures: related-paper discovery, metadata verifica
 ### Q9: What are the known security considerations for PDF downloads?
 
 **Answer:**
-The related-paper downloader validates URLs before connection: only public HTTPS URLs are allowed, DNS resolution checks for non-public addresses, redirect targets are validated against the original address set, and the final connected address is checked to ensure it's in the originally validated set. This defends against DNS re-resolution attacks and SSRF. Additionally, byte limits, page limits, and character limits prevent resource exhaustion.
+The related-paper downloader validates URLs before connection: only public HTTPS URLs are allowed, DNS resolution checks for non-public addresses, redirect targets are validated against the original address set, and the final connected address is checked to ensure it's in the originally validated set. This is a mitigation that defends against many DNS re-resolution attacks and SSRF. However, urllib re-resolves DNS at connect time, and the intersection check runs after the request was already sent, so a very fast DNS change during the connection window could theoretically bypass the check. True IP pinning (connecting to the validated IP while preserving hostname for SNI and certificate verification) is not implemented. Additionally, byte limits, page limits, and character limits prevent resource exhaustion.
 
 ---
 

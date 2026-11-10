@@ -39,6 +39,27 @@ def load_gold_annotations(gold_dir: Path) -> Dict[str, Dict[str, Any]]:
     return annotations
 
 
+def count_filled_annotations(annotations: Dict[str, Dict[str, Any]]) -> int:
+    """Count annotations that have at least one non-empty field value."""
+    filled_count = 0
+    for annotation in annotations.values():
+        fields = annotation.get("fields", {})
+        # Check if any field has a non-empty value
+        has_value = False
+        for field_data in fields.values():
+            value = field_data.get("value")
+            if value is not None:
+                if isinstance(value, str) and value.strip():
+                    has_value = True
+                    break
+                elif isinstance(value, list) and value and any(isinstance(v, str) and v.strip() for v in value):
+                    has_value = True
+                    break
+        if has_value:
+            filled_count += 1
+    return filled_count
+
+
 def load_validation_results(run_dir: Path) -> Dict[str, Dict[str, Any]]:
     """Load all analysis results from a validation run directory."""
     run_dir = Path(run_dir)
@@ -84,6 +105,7 @@ def main():
     # Load gold annotations
     gold_annotations = load_gold_annotations(args.gold_dir)
     n_papers = len(gold_annotations)
+    n_filled_papers = count_filled_annotations(gold_annotations)
 
     # Load validation results
     validation_results = load_validation_results(args.run_dir)
@@ -99,18 +121,19 @@ def main():
     print("=" * 70)
     print()
 
-    # Print sample size warning
-    print(f"n_papers: {n_papers}")
+    print(f"n_papers (total gold files): {n_papers}")
+    print(f"n_papers (filled annotations): {n_filled_papers}")
     print(f"n_fields: {n_fields}")
     print()
 
-    if n_papers < 5:
+    if n_filled_papers < 5:
         print("=" * 70)
         print("WARNING: Small sample size")
         print("=" * 70)
-        print(f"Only {n_papers} paper(s) in the evaluation set. Metrics may not be")
-        print("representative of general system performance. Expand the gold set")
-        print("to at least 5 papers before making broad accuracy claims.")
+        print(f"Only {n_filled_papers} paper(s) have filled gold annotations.")
+        print("Metrics may not be representative of general system performance.")
+        print("Expand the gold set to at least 5 filled papers before making")
+        print("broad accuracy claims.")
         print()
 
     # Evaluate each paper that has both gold and results
