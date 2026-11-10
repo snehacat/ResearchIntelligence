@@ -291,34 +291,17 @@ class TestSafePDFDownload:
     def test_url_validation_returns_hostname_and_addresses(self):
         """A11: URL validation returns hostname and validated addresses for connection pinning."""
         from unittest.mock import patch
-        
-        with patch("scholarly_search.related_paper_extractor.socket.getaddrinfo") as mock_dns:
-            mock_dns.return_value = [
-                (2, 1, 6, "", ("93.184.216.34", 443)),
-                (2, 1, 6, "", ("93.184.216.34", 443)),
-            ]
-            
-            hostname, addresses = RelatedPaperEvidenceExtractor._validate_public_https_url(
-                "https://repository.example/paper.pdf"
-            )
-            
-            assert hostname == "repository.example"
-            assert addresses == {"93.184.216.34"}
 
-    def test_url_validation_returns_hostname_and_addresses(self):
-        """A11: URL validation returns hostname and validated addresses for connection pinning."""
-        from unittest.mock import patch
-        
         with patch("scholarly_search.related_paper_extractor.socket.getaddrinfo") as mock_dns:
             mock_dns.return_value = [
                 (2, 1, 6, "", ("93.184.216.34", 443)),
                 (2, 1, 6, "", ("93.184.216.34", 443)),
             ]
-            
+
             hostname, addresses = RelatedPaperEvidenceExtractor._validate_public_https_url(
                 "https://repository.example/paper.pdf"
             )
-            
+
             assert hostname == "repository.example"
             assert addresses == {"93.184.216.34"}
 

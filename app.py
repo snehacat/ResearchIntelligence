@@ -875,7 +875,10 @@ def main():
         except ValueError as error:
             st.session_state["research_bundle"] = None
             st.session_state["current_document_id"] = None
-            st.error(f"⚠️ {error}")
+            st.error(
+                "Analysis failed. This can happen if the PDF has no extractable text. "
+                "Please check the PDF format and try again."
+            )
         except Exception:
             st.session_state["research_bundle"] = None
             st.session_state["current_document_id"] = None

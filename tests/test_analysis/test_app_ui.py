@@ -243,3 +243,42 @@ def test_user_facing_errors_are_sanitized():
     assert "C:/" not in error_text
     assert "Users\\" not in error_text
     assert "api_key" not in error_text.lower()
+
+
+def test_valueerror_exception_is_sanitized():
+    """A10 regression: ValueError exceptions show safe message, not raw error string."""
+    # This test verifies that the ValueError handler in app.py shows a fixed
+    # safe message instead of rendering str(error) which could include local paths.
+    # We test this by inspecting the error handling code path directly.
+    import inspect
+    from app import run_analysis
+
+    source = inspect.getsource(run_analysis)
+    # Verify that ValueError is raised with a message (not the UI handler)
+    assert "raise ValueError" in source
+
+    # Now verify the UI handler in app.py shows safe message
+    project_root = Path(__file__).parents[2]
+    with open(project_root / "app.py", "r", encoding="utf-8") as f:
+        app_source = f.read()
+
+    # Find the ValueError exception handler in the UI section
+    # It should show: "Analysis failed. This can happen if the PDF has no extractable text."
+    # It should NOT show: f"⚠️ {error}" which would expose raw error string
+    assert "except ValueError as error:" in app_source
+    # The safe message should be present
+    assert "PDF has no extractable text" in app_source
+    # Verify that the old unsafe pattern (f"⚠️ {error}") is NOT present for ValueError
+    # We check that the ValueError handler section does NOT contain the pattern
+    lines = app_source.split("\n")
+    in_valueerror_handler = False
+    for i, line in enumerate(lines):
+        if "except ValueError as error:" in line:
+            in_valueerror_handler = True
+        elif in_valueerror_handler and "except" in line and "ValueError" not in line:
+            in_valueerror_handler = False
+        elif in_valueerror_handler:
+            # Inside ValueError handler, should not have unsafe pattern
+            assert "{error}" not in line or "f" not in line, (
+                f"Line {i+1} in ValueError handler may expose raw error: {line}"
+            )
