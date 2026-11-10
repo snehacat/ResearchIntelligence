@@ -51,6 +51,8 @@ def build_template(document_id: str, source_pdf: str) -> dict:
         "source_pdf": source_pdf,
         "annotator": "TODO",
         "annotation_date": date.today().isoformat(),
+        "split": "dev",
+        "annotated_without_model_output": False,
         "notes": None,
         "fields": fields,
     }
@@ -78,6 +80,17 @@ def main() -> None:
         "--output-dir",
         default=None,
         help="Output directory for the template (default: evaluation/gold_set/)",
+    )
+    parser.add_argument(
+        "--citation-sample",
+        action="store_true",
+        help="Generate a citation sample template instead of a gold-set template.",
+    )
+    parser.add_argument(
+        "--num-pairs",
+        type=int,
+        default=35,
+        help="Number of citation pairs in the sample template (default: 35).",
     )
     args = parser.parse_args()
 
@@ -119,6 +132,34 @@ def main() -> None:
             source_pdf_rel = str(pdf_path).replace("\\", "/")
 
     output_dir.mkdir(parents=True, exist_ok=True)
+
+    # ── Citation sample branch (item 3) ───────────────────────────────────────
+    if args.citation_sample:
+        from evaluation.citation_sample_schema import build_citation_sample_template
+        citation_dir = Path(__file__).resolve().parent / "citation_sample"
+        if args.output_dir:
+            citation_dir = Path(args.output_dir)
+        citation_dir.mkdir(parents=True, exist_ok=True)
+        output_path = citation_dir / f"{document_id}.json"
+        if output_path.exists():
+            print(f"Citation sample template already exists at {output_path}.")
+            print("Delete it first if you want to regenerate.")
+            return
+        tmpl = build_citation_sample_template(document_id, num_pairs=args.num_pairs)
+        with open(output_path, "w", encoding="utf-8") as fh:
+            json.dump(tmpl, fh, indent=2, ensure_ascii=False)
+            fh.write("\n")
+        print(f"Citation sample template created: {output_path}")
+        print(f"Fill in {args.num_pairs} claim/passage pairs from the analyzer output.")
+        print("For each pair:")
+        print("  - 'claim': the extracted value returned by the analyzer")
+        print("  - 'passage': the cited chunk text from evidence_citations")
+        print("  - 'chunk_id': the chunk_id from citations[]")
+        print("  - 'label': 'supported' | 'partially_supported' | 'unsupported'")
+        print("  - Set 'annotated_without_model_output' to true if you judged")
+        print("    each pair from the PDF only, not from model output.")
+        return
+
     output_path = output_dir / f"{document_id}.json"
 
     if output_path.exists():
@@ -135,6 +176,9 @@ def main() -> None:
     print()
     print("Fill in each field:")
     print("  - Set 'annotator' to your name.")
+    print("  - Set 'split' to 'dev' (tuning) or 'test' (held-out final evaluation).")
+    print("  - Set 'annotated_without_model_output' to true if you annotated")
+    print("    from the PDF only; false if you consulted any model output.")
     print("  - For each field under 'fields':")
     print("    - Replace the 'value' with the correct answer from the PDF.")
     print("    - Set 'evidence_pages' to [page_number, ...] where the info appears.")

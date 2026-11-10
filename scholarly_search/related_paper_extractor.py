@@ -19,7 +19,7 @@ import pymupdf
 from embeddings.embedding_generator import EmbeddingError
 from chunking.text_chunker import ChunkingError
 from pdf_processing.text_extractor import PDFExtractionError, TextExtractor
-from paper_analysis_errors import PaperAnalysisError
+from paper_analysis_errors import ExtractionError, PaperAnalysisError
 from qa.answer_generator import AnswerGenerationError
 from retrieval.semantic_retriever import RetrievalError
 from scholarly_search.crossref_client import ScholarlySearchError
@@ -248,6 +248,7 @@ class RelatedPaperEvidenceExtractor:
             AnswerGenerationError,
             ScholarlySearchError,
             PaperAnalysisError,
+            ExtractionError,
             ChunkingError,
         ) as error:
             return self._status_record(

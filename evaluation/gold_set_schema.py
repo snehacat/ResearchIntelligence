@@ -3,13 +3,22 @@ Gold-set annotation schema and validator for Phase 1 evaluation.
 
 Schema rules
 ------------
-- document_id   : str, must match filename stem
-- source_pdf    : str, relative path to the PDF from project root
-- annotator     : str, non-empty
-- annotation_date: str, ISO 8601 date (YYYY-MM-DD)
-- notes         : str | None
-- fields        : dict mapping each of the 10 schema field names to a
-                  FieldAnnotation with 'value' and 'evidence_pages'
+- document_id              : str, must match filename stem
+- source_pdf               : str, relative path to the PDF from project root
+- annotator                : str, non-empty
+- annotation_date          : str, ISO 8601 date (YYYY-MM-DD)
+- split                    : "dev" | "test"  (item 7)
+                              dev  — tuning split; run freely.
+                              test — held-out split; harness prints a warning
+                                     and logs every test-split run.
+- annotated_without_model_output : bool  (item 8)
+                              Must be set explicitly to true or false.
+                              true  — annotations written from the PDF only.
+                              false — model output was consulted; annotator
+                                      must note what was used in 'notes'.
+- notes                    : str | None
+- fields                   : dict mapping each of the 10 schema field names to
+                             a FieldAnnotation with 'value' and 'evidence_pages'
 
 String fields  : title, publication_year, abstract, research_problem,
                  methodology, dataset, reported_results
@@ -51,6 +60,8 @@ LIST_FIELDS: Tuple[str, ...] = (
 
 ALL_FIELDS: Tuple[str, ...] = STRING_FIELDS + LIST_FIELDS
 
+VALID_SPLITS: Tuple[str, ...] = ("dev", "test")
+
 _PLACEHOLDER_PATTERNS = re.compile(
     r"^(?:todo|\.{2,}|n/a|na|unknown|placeholder|fill ?in|tbd)$",
     re.IGNORECASE,
@@ -81,7 +92,15 @@ def validate_annotation(data: Dict[str, Any], filename_stem: str) -> None:
         GoldSetValidationError: On any schema or value violation.
     """
     # Top-level required keys
-    for key in ("document_id", "source_pdf", "annotator", "annotation_date", "fields"):
+    for key in (
+        "document_id",
+        "source_pdf",
+        "annotator",
+        "annotation_date",
+        "split",
+        "annotated_without_model_output",
+        "fields",
+    ):
         if key not in data:
             raise GoldSetValidationError(f"Missing top-level key: '{key}'")
 
@@ -105,6 +124,22 @@ def validate_annotation(data: Dict[str, Any], filename_stem: str) -> None:
     ):
         raise GoldSetValidationError(
             "'annotation_date' must be an ISO 8601 date string (YYYY-MM-DD)."
+        )
+
+    # split (item 7)
+    split = data["split"]
+    if split not in VALID_SPLITS:
+        raise GoldSetValidationError(
+            f"'split' must be one of {VALID_SPLITS}; got '{split}'."
+        )
+
+    # annotated_without_model_output (item 8)
+    awmo = data["annotated_without_model_output"]
+    if not isinstance(awmo, bool):
+        raise GoldSetValidationError(
+            "'annotated_without_model_output' must be a boolean (true or false). "
+            "If you consulted model output during annotation, set it to false and "
+            "describe what was used in the 'notes' field."
         )
 
     # notes is optional
@@ -198,11 +233,15 @@ def load_annotation(path: Path) -> Dict[str, Any]:
     return data
 
 
-def load_gold_set(gold_dir: Path) -> List[Dict[str, Any]]:
+def load_gold_set(
+    gold_dir: Path,
+    split: Optional[str] = None,
+) -> List[Dict[str, Any]]:
     """Load every valid annotation from a directory.
 
     Args:
         gold_dir: Directory containing .json annotation files.
+        split:    If given, return only annotations with this split value.
 
     Returns:
         List of validated annotation dicts (alphabetical order by document_id).
@@ -215,4 +254,7 @@ def load_gold_set(gold_dir: Path) -> List[Dict[str, Any]]:
         raise GoldSetValidationError(
             f"No .json annotation files found in {gold_dir}"
         )
-    return [load_annotation(p) for p in paths]
+    annotations = [load_annotation(p) for p in paths]
+    if split is not None:
+        annotations = [a for a in annotations if a.get("split") == split]
+    return annotations

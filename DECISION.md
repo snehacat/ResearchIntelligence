@@ -15,6 +15,44 @@ Never claim that a research gap is definitely novel simply because the system di
 
 ---
 
+### PHASE-1-HARDENING: Evaluation harness hardening — 2026-11-10
+
+**Status:** Implemented; 700 tests passing, 0 failures, 6 skipped.
+
+**Item 1 — Pre-existing test failures diagnosed and fixed**
+
+*Failure 1 — `test_analyze_button_explains_when_no_pdf_is_selected`*
+Root cause: the UI enhancement changed the button label from `"Analyze paper"` to `"🔍 Analyze"` and the error copy. The test had hardcoded the old strings — a stale test, not a production bug. Fix: updated assertions in `tests/test_analysis/test_app_ui.py`.
+
+*Failure 2 — `test_isolates_known_analysis_errors_per_candidate`*
+Root cause: a **real production bug**. `RelatedPaperEvidenceExtractor._process_paper` caught eight specific exception types but omitted `ExtractionError` (the LLM extraction failure class). `ExtractionError` does not inherit from `PaperAnalysisError`, so it bubbled up uncaught, crashing the extractor instead of recording an `analysis_failed` status. Fix: imported `ExtractionError` in `scholarly_search/related_paper_extractor.py` and added it to the caught tuple. Alternative considered: making `ExtractionError` inherit from `PaperAnalysisError`. Rejected — that would silently change the exception hierarchy; an explicit import is clearer.
+
+**Item 2 — Citation metric renamed to "citation traceability rate"**
+The original name "citation support rate" implies the cited passage supports the claim, which the metric does not check. It only verifies page overlap plus a non-insufficient sufficiency label. Renamed everywhere: code, tests, report JSON keys, Markdown report, footnotes. The footnote now explicitly states the limitation. Alternative considered: keeping the old name. Rejected — a misleading metric name would misrepresent the system's capabilities in an interview.
+
+**Item 3 — Human-labeled citation agreement metric**
+Added `evaluation/citation_sample_schema.py` with claim/passage pair validation (labels: `supported | partially_supported | unsupported`) and `compute_citation_agreement()` computing agreement rate plus TP/FP/FN/TN. Label mapping is lenient (`partially_supported → traceable`) because the auto metric only checks page overlap — a strict mapping would inflate FN counts without useful signal. Footnote in report makes the mapping explicit.
+
+**Item 4 — Retrieval metrics: hit-rate@1,3,5 and MRR**
+Added k=1 and k=5 to give a fuller picture of retrieval depth. Added MRR (mean reciprocal rank) over first 20 chunks. MRR is preferred over MAP here because there is typically one correct page region per field. Alternative considered: Precision@k. Rejected — conflates "did any chunk hit" with "how many chunks hit", not meaningful with single-page annotations.
+
+**Item 5 — Set-based metrics for list fields**
+Token-F1 on joined list items is sensitive to ordering and gives partial credit to wrong items. Replaced with set-based precision, recall, F1 over normalized items (lowercase, stripped, punctuation → space) for `authors`, `evaluation_metrics`, `limitations`. Token-F1 kept only for free-text string fields, labelled "rough surface-form proxy". `_list_token_f1` retained as a compatibility shim. Alternative considered: exact-match set overlap (0/1 per item). Rejected — partial credit (e.g. "BLEU score" vs "BLEU") is preferable for identifying systematic errors.
+
+**Item 6 — Repeated runs with --runs N**
+LLM extraction is non-deterministic; a single run may be an outlier. Added `--runs N` (default 1). Reports mean, min, max across runs. Estimated Groq request count printed before any API calls. Alternative considered: averaging at the field level across runs. Rejected — reporting min/max is more useful for understanding variance.
+
+**Item 7 — Dev/test split**
+Added `"split": "dev" | "test"` to the gold-set schema. Running `--split test` prints a warning and appends a timestamped entry to `evaluation/results/test_split_audit.log`. Rationale: without a split it is tempting to tune against the full gold set and report numbers on the same set — inflating reported performance. Alternative considered: a separate directory for test annotations. Rejected — a field in the JSON is simpler and still enforceable in the validator.
+
+**Item 8 — Annotation independence**
+Added `"annotated_without_model_output": bool` to the gold-set schema (must be set explicitly). README states annotations must be written from the PDF, never copied from model output. Harness reports declaration count in every run. Alternative considered: trusting the annotator implicitly. Rejected — making it explicit and auditable is essential for interview credibility.
+
+**Item 9 — Unified timestamped Markdown + JSON report**
+Replaced `report.json` + `report_summary.txt` with `report.json` + `report.md`. The Markdown contains all metrics, per-paper table, annotation independence count, citation agreement (when available), split, num_runs, and limitations footnotes.
+
+---
+
 ### PHASE-1: Evaluation Harness — 2026-11-10
 
 **Status:** Implemented; 63 new tests passing; gold annotations not yet supplied.

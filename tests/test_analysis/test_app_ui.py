@@ -11,14 +11,14 @@ def test_analyze_button_explains_when_no_pdf_is_selected():
     app_test.run()
 
     analyze_button = app_test.button[0]
-    assert analyze_button.label == "Analyze paper"
+    assert analyze_button.label == "🔍 Analyze"
     assert not analyze_button.disabled
 
     analyze_button.click().run()
 
     assert not app_test.exception
     assert any(
-        "Choose a research-paper PDF" in element.value
+        "Please choose a research-paper PDF" in element.value
         for element in app_test.error
     )
 
