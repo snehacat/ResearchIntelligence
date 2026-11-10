@@ -76,14 +76,14 @@ This will show the most recent run directory, e.g., `20261110T123456789012Z`.
 Pass the run directory to the metrics script:
 
 ```powershell
-python evaluation/report_metrics.py --gold-dir evaluation/gold_set/ --run-dir validation/step5/runs/YOUR_RUN_DIRECTORY
+python -m evaluation.report_metrics --gold-dir evaluation/gold_set/ --run-dir validation/step5/runs/YOUR_RUN_DIRECTORY
 ```
 
 Replace `YOUR_RUN_DIRECTORY` with the actual run directory name from Step 2.
 
 **Example:**
 ```powershell
-python evaluation/report_metrics.py --gold-dir evaluation/gold_set/ --run-dir validation/step5/runs/20261110T123456789012Z
+python -m evaluation.report_metrics --gold-dir evaluation/gold_set/ --run-dir validation/step5/runs/20261110T123456789012Z
 ```
 
 **What this does:**
