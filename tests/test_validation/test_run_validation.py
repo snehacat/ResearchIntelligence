@@ -12,6 +12,7 @@ from validation.step5.run_validation import (
     _is_valid_real_backend_result,
     _prepare_output_directory,
     build_argument_parser,
+    main,
 )
 
 
@@ -815,39 +816,54 @@ class TestReproducibleValidationA5:
         # This would be marked as operationally successful but quality-pending
 
 
-class TestHistoricalArtifactRetentionA5:
-    """Tests for retention of historical validation artifacts (A5)."""
+class TestValidationArtifactOutputA5:
+    """Tests that each validation run writes its own output artifacts."""
 
-    def test_historical_runs_directory_exists(self):
-        """A5: Historical runs directory exists and contains artifacts."""
-        runs_dir = Path(__file__).parent.parent.parent / 'validation' / 'step5' / 'runs'
-        assert runs_dir.exists()
-        assert runs_dir.is_dir()
-        
-        # Should contain at least one historical run
-        run_dirs = list(runs_dir.iterdir())
-        assert len(run_dirs) >= 1
+    def test_run_writes_artifacts_to_requested_directory(self, tmp_path, monkeypatch):
+        output_dir = tmp_path / "validation-run"
+        papers_dir = tmp_path / "papers"
+        papers_dir.mkdir()
+        (papers_dir / "attention_is_all_you_need.pdf").touch()
+        result = {
+            "status": "failed",
+            "pdf_path": "attention_is_all_you_need.pdf",
+            "document_id": "attention_is_all_you_need",
+            "runtime_seconds": 0,
+            "errors": ["mock failure"],
+            "retries": 0,
+            "json_repairs": 0,
+            "fallback_calls": 0,
+            "backend": "groq",
+            "model": "test-model",
+            "prompt_eval_count": None,
+            "extraction_diagnostics": {},
+            "analysis": None,
+            "error_message": "mock failure",
+        }
+        from validation.step5 import run_validation
 
-    def test_historical_run_contains_required_artifacts(self):
-        """A5: Historical run contains required artifacts (report, evidence audit, results)."""
-        runs_dir = Path(__file__).parent.parent.parent / 'validation' / 'step5' / 'runs'
-        run_dirs = list(runs_dir.iterdir())
-        
-        if run_dirs:
-            # Check the most recent run
-            latest_run = max(run_dirs, key=lambda p: p.stat().st_mtime)
-            
-            # Should contain validation_report.md
-            report_file = latest_run / 'validation_report.md'
-            assert report_file.exists(), f"Missing validation_report.md in {latest_run}"
-            
-            # Should contain evidence_audit.csv
-            audit_file = latest_run / 'evidence_audit.csv'
-            assert audit_file.exists(), f"Missing evidence_audit.csv in {latest_run}"
-            
-            # Should contain results directory
-            results_dir = latest_run / 'results'
-            assert results_dir.exists(), f"Missing results directory in {latest_run}"
+        monkeypatch.setattr(run_validation, "__file__", str(tmp_path / "run_validation.py"))
+        monkeypatch.setattr(run_validation, "analyze_paper", Mock(return_value=result))
+
+        exit_code = main([
+            "--backend", "groq",
+            "--model", "test-model",
+            "--confirm-public-papers",
+            "--confirm-groq-costs",
+            "--delay-seconds", "0",
+            "--paper", "attention_is_all_you_need",
+            "--output-dir", str(output_dir),
+        ])
+
+        assert exit_code == 1
+        assert (output_dir / "validation_report.md").is_file()
+        assert (output_dir / "evidence_audit.csv").is_file()
+        assert (
+            output_dir / "results" / "attention_is_all_you_need_result.json"
+        ).is_file()
+        assert (
+            output_dir / "raw_outputs" / "attention_is_all_you_need_error.txt"
+        ).is_file()
 
 
 class TestSinglePaperSelectionBatch6:

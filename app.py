@@ -410,7 +410,7 @@ def _render_sidebar(discover_related_default: bool) -> tuple[bool, float, bool]:
         if api_key_set:
             st.success("GROQ_API_KEY ✓", icon="✅")
         else:
-            st.error("GROQ_API_KEY not set", icon="🔑")
+            st.error("Groq API credentials not configured", icon="🔑")
 
         st.markdown("---")
         with st.expander("About"):
