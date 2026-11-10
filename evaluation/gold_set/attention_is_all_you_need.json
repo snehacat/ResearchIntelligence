@@ -5,7 +5,7 @@
   "annotation_date": "2026-11-10",
   "split": "dev",
   "annotated_without_model_output": false,
-  "notes": "Gold set annotation created from PDF review. Model output was consulted for verification of field coverage, but ground truth values are from the paper itself.",
+  "notes": "Gold set annotation created from PDF review. Model output was consulted for verification of field coverage, but ground truth values are from the paper itself. This annotation should be re-created from the PDF alone without looking at model output for a clean evaluation.",
   "fields": {
     "title": {
       "value": "Attention Is All You Need",
