@@ -186,6 +186,15 @@ operating-system environment. The key is read when a generation request is
 made. Do not paste it into source code, chat, logs, or reports. The project
 does not automatically load `.env` files.
 
+In PowerShell, set it for the current session before starting the app:
+
+```powershell
+$env:GROQ_API_KEY = "your_groq_api_key"
+```
+
+This setting applies only to the current PowerShell session. Do not print the
+variable value or commit it to the repository.
+
 The configured Groq model defaults to `openai/gpt-oss-20b`; override it with
 `RESEARCHINTELLIGENCE_LLM_MODEL` or the validation script's `--model` option.
 This model was selected from provider documentation describing strict
