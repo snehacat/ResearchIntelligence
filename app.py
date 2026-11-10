@@ -288,7 +288,7 @@ def run_analysis(
             discovery_status = "completed"
         except Exception as e:
             discovery_status = "failed"
-            discovery_error = str(e)
+            discovery_error = "Crossref or network error occurred"
 
         if related_papers:
             try:
@@ -569,7 +569,7 @@ def _render_related_tab(bundle: Dict[str, Any]) -> None:
     discovery_error = bundle.get("discovery_error")
 
     if discovery_status == "failed":
-        st.error(f"Related-paper search failed: {discovery_error}")
+        st.error("Related-paper search failed. This can happen if Crossref is unavailable or a network issue occurred.")
         st.info("Primary paper analysis is still available in the other tabs.")
         return
     if not bundle.get("related_paper_candidates"):

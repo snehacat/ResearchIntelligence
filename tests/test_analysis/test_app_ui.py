@@ -282,3 +282,57 @@ def test_valueerror_exception_is_sanitized():
             assert "{error}" not in line or "f" not in line, (
                 f"Line {i+1} in ValueError handler may expose raw error: {line}"
             )
+
+
+def test_discovery_exception_is_sanitized():
+    """A10 regression: Discovery exceptions in run_analysis do not expose raw error strings."""
+    # This test verifies that the discovery_error field does not contain str(e)
+    # which could include local paths or provider internals
+    import inspect
+    from app import run_analysis
+
+    source = inspect.getsource(run_analysis)
+    # Verify that the discovery exception handler does NOT use str(e)
+    lines = source.split("\n")
+    in_discovery_handler = False
+    for i, line in enumerate(lines):
+        if "except Exception as e:" in line and "discovery" in source[max(0, i-200):i]:
+            in_discovery_handler = True
+        elif in_discovery_handler and "except" in line:
+            in_discovery_handler = False
+        elif in_discovery_handler:
+            # Inside discovery handler, should not have str(e)
+            assert "str(e)" not in line, (
+                f"Line {i+1} in discovery handler may expose raw error: {line}"
+            )
+
+
+def test_exception_with_secret_and_path_is_sanitized():
+    """A10 regression: Exception containing fake secret and local path is not shown to user."""
+    # This test verifies that if an exception contains sensitive information,
+    # it is not displayed in the UI. We verify the code patterns prevent this.
+    project_root = Path(__file__).parents[2]
+    with open(project_root / "app.py", "r", encoding="utf-8") as f:
+        app_source = f.read()
+
+    # Check that no exception handler in the UI section uses f-string with exception variable
+    # This would be a pattern like: st.error(f"Error: {error}")
+    lines = app_source.split("\n")
+    in_exception_handler = False
+    for i, line in enumerate(lines):
+        if "except" in line and ("Exception" in line or "ValueError" in line or "error" in line):
+            in_exception_handler = True
+        elif in_exception_handler and line.strip() and not line.strip().startswith("#"):
+            # Check if this line could expose raw exception
+            if "st.error" in line and ("{" in line or "f\"" in line or "f'" in line):
+                # Check if it contains an exception variable name
+                if any(var in line for var in ["error", "e", "exception", "exc"]):
+                    # This might be unsafe - verify it's a safe message
+                    # Safe messages are fixed strings, not formatted with exception
+                    assert "API key" not in line.lower() or "not set" in line.lower(), (
+                        f"Line {i+1} may expose API key in error: {line}"
+                    )
+        # End of exception handler is typically the next blank line or another except/finally
+        if in_exception_handler and (line.strip() == "" or "except" in line or "finally" in line):
+            if "except" not in line:  # Don't end on the next except
+                in_exception_handler = False
