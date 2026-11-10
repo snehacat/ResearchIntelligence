@@ -1,6 +1,10 @@
 """Edge-case unit tests for evaluation metrics (Task 3)."""
 
+from pathlib import Path
+
 import pytest
+from evaluation.gold_set_schema import load_annotation
+from evaluation.report_metrics import count_filled_annotations, load_gold_annotations
 from evaluation.metrics import (
     _token_f1,
     _set_metrics,
@@ -299,3 +303,35 @@ class TestNormalizeItemEdgeCases:
     def test_trailing_whitespace_after_normalize(self):
         """Trailing whitespace should be stripped after normalization."""
         assert _normalize_item("Author One  ") == "author one"
+
+
+class TestGoldAnnotationCounts:
+    def test_empty_templates_do_not_increase_filled_paper_count(self):
+        project_root = Path(__file__).parents[2]
+        annotated = load_annotation(
+            project_root
+            / "evaluation"
+            / "gold_set"
+            / "attention_is_all_you_need.json"
+        )
+        annotations = {
+            "attention_is_all_you_need": annotated,
+            "empty_template_one": {
+                "fields": {"title": {"value": ""}, "authors": {"value": []}}
+            },
+            "empty_template_two": {
+                "fields": {"title": {"value": None}, "authors": {"value": []}}
+            },
+        }
+
+        assert count_filled_annotations(annotations) == 1
+
+    def test_owner_choice_todo_files_are_not_loaded_as_gold(self, tmp_path, capsys):
+        todo_file = tmp_path / "placeholder_paper_1.json"
+        todo_file.write_text(
+            '{"TODO": "The owner chooses which paper to add to the gold set."}',
+            encoding="utf-8",
+        )
+
+        assert load_gold_annotations(tmp_path) == {}
+        assert "The owner chooses which paper" in capsys.readouterr().out

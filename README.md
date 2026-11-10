@@ -186,6 +186,15 @@ operating-system environment. The key is read when a generation request is
 made. Do not paste it into source code, chat, logs, or reports. The project
 does not automatically load `.env` files.
 
+In PowerShell, set it for the current session before starting the app:
+
+```powershell
+$env:GROQ_API_KEY = "your_groq_api_key"
+```
+
+This setting applies only to the current PowerShell session. Do not print the
+variable value or commit it to the repository.
+
 The configured Groq model defaults to `openai/gpt-oss-20b`; override it with
 `RESEARCHINTELLIGENCE_LLM_MODEL` or the validation script's `--model` option.
 This model was selected from provider documentation describing strict
@@ -237,12 +246,9 @@ The following validation run folders exist in `validation/step5/runs/` on the ma
 - MRR: 0.8000
 - Based on one annotated paper (attention_is_all_you_need.pdf) evaluated against its gold set in `evaluation/gold_set/`. Token-F1 and set-F1 are surface-form proxies; they do not measure factual correctness. Citation traceability means page overlap + non-empty citation + non-insufficient sufficiency; it does NOT verify that the cited passage semantically supports the extracted claim. Full evaluation requires more annotated papers and human review.
 
-For a one-request connectivity check with a synthetic prompt and no paper
-content, run:
-
-```powershell
-python test_qa_smoke.py --confirm-costs
-```
+There is no standalone synthetic connectivity-check script in this repository.
+The validation harness's `--help` output checks command-line options only; it
+does not make or verify a provider request.
 
 ### Scholarly search provider configuration
 
