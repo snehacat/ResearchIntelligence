@@ -246,12 +246,9 @@ The following validation run folders exist in `validation/step5/runs/` on the ma
 - MRR: 0.8000
 - Based on one annotated paper (attention_is_all_you_need.pdf) evaluated against its gold set in `evaluation/gold_set/`. Token-F1 and set-F1 are surface-form proxies; they do not measure factual correctness. Citation traceability means page overlap + non-empty citation + non-insufficient sufficiency; it does NOT verify that the cited passage semantically supports the extracted claim. Full evaluation requires more annotated papers and human review.
 
-For a one-request connectivity check with a synthetic prompt and no paper
-content, run:
-
-```powershell
-python test_qa_smoke.py --confirm-costs
-```
+There is no standalone synthetic connectivity-check script in this repository.
+The validation harness's `--help` output checks command-line options only; it
+does not make or verify a provider request.
 
 ### Scholarly search provider configuration
 
