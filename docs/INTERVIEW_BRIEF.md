@@ -226,7 +226,7 @@ These provide additional functionality but are not required for minimal analysis
 
 8. **Job manager not integrated:** SQLite job manager exists as backend API but is not used by Streamlit UI (synchronous flow).
 
-9. **DNS re-resolution gap (mitigated, not eliminated):** The related-paper downloader validates URLs before connection and checks that the final address is in the originally validated set. However, urllib re-resolves DNS at connect time, and the intersection check runs after the request was already sent. This is a mitigation that catches many cases but does not implement true IP pinning (connecting to the validated IP while preserving hostname for SNI and certificate verification). The remaining gap is that a very fast DNS change during the connection window could theoretically bypass the check.
+9. **Related-paper download address pinning:** The downloader validates public HTTPS addresses and connects directly to a validated numeric IP. The original hostname is retained for the HTTP Host header, TLS SNI, and certificate verification. Each redirect target is validated and its address selected before the redirect is followed. This prevents a DNS answer change between validation and connection from changing the TCP destination. It does not by itself establish that a public host or downloaded PDF is trustworthy; the downloader also applies byte, page, and extracted-character limits.
 
 ### UNVERIFIED Components
 
@@ -347,7 +347,7 @@ The implementation isolates failures: related-paper discovery, metadata verifica
 ### Q9: What are the known security considerations for PDF downloads?
 
 **Answer:**
-The related-paper downloader validates URLs before connection: only public HTTPS URLs are allowed, DNS resolution checks for non-public addresses, redirect targets are validated against the original address set, and the final connected address is checked to ensure it's in the originally validated set. This is a mitigation that defends against many DNS re-resolution attacks and SSRF. However, urllib re-resolves DNS at connect time, and the intersection check runs after the request was already sent, so a very fast DNS change during the connection window could theoretically bypass the check. True IP pinning (connecting to the validated IP while preserving hostname for SNI and certificate verification) is not implemented. Additionally, byte limits, page limits, and character limits prevent resource exhaustion.
+The related-paper downloader allows only public HTTPS URLs. It connects directly to a validated numeric IP rather than letting urllib resolve the hostname again at connection time, while retaining the original hostname for the HTTP Host header, TLS SNI, and certificate verification. Every redirect target is validated and pinned before it is followed. This addresses DNS rebinding between validation and connection; it does not make a public host or its PDF trustworthy. Byte, page, and extracted-character limits provide additional resource bounds.
 
 ---
 
