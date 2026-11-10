@@ -15,6 +15,107 @@ Never claim that a research gap is definitely novel simply because the system di
 
 ---
 
+### PHASE-1: Evaluation Harness — 2026-11-10
+
+**Status:** Implemented; 63 new tests passing; gold annotations not yet supplied.
+
+**What was built:**
+
+| File | Purpose |
+|---|---|
+| `evaluation/gold_set_schema.py` | JSON schema + strict validator for annotation files |
+| `evaluation/gold_set/README.md` | Annotator instructions and field rules |
+| `evaluation/generate_template.py` | CLI to generate skeleton annotation files |
+| `evaluation/metrics.py` | Three metrics: token-F1, retrieval hit-rate@k, citation-support rate |
+| `evaluation/run_harness.py` | CLI runner: validates gold set → runs pipeline → writes report |
+| `tests/test_evaluation/test_phase1_harness.py` | 63 unit + dry-run integration tests |
+
+**Three metrics — definitions and stated limitations:**
+
+1. **Field-level extraction accuracy (token-F1)**
+   Each extracted field is compared to the gold annotation using token-F1
+   (macro-averaged over list items). This is a surface-form proxy — semantically
+   equivalent but differently worded extractions will score below 1.0. It cannot
+   detect factually wrong values that happen to share tokens with the gold.
+   *Alternative considered:* exact-match accuracy. Rejected because minor
+   wording variations (e.g. "BLEU score" vs "BLEU") would score 0 unfairly.
+   *Alternative considered:* BERTScore / embedding similarity. Rejected for
+   Phase 1 because it adds a dependency and obscures the metric for interviewers;
+   token-F1 is transparent and re-runnable without a model.
+
+2. **Retrieval hit-rate@k**
+   For each field with annotated `evidence_pages`, at least one of the top-k
+   retrieved chunks must have `start_page` or `end_page` overlapping an annotated
+   page. k defaults to 3 (matching the production `top_k`).
+   *Alternative considered:* chunk-id exact match. Rejected because chunk
+   boundaries change if chunking parameters change; page overlap is stable.
+   *Alternative considered:* k=5. Rejected; the pipeline retrieves top_k=3 in
+   production, so measuring at k=3 reflects actual system behavior.
+
+3. **Citation-support rate**
+   A citation is "supported" when `evidence_sufficiency ∈ {sufficient, partial}`,
+   at least one citation entry is present, and at least one cited page appears in
+   the annotated evidence pages. This measures whether the system points to the
+   right region of the paper, not whether the extracted text is correct.
+   *Alternative considered:* only checking sufficiency label. Rejected because
+   the sufficiency label is a retrieval heuristic; page-level traceability is
+   independently verifiable.
+
+**Gold-set annotation format:**
+- One JSON file per paper at `evaluation/gold_set/<document_id>.json`
+- 10 field annotations, each with `value` and `evidence_pages`
+- Strict validator rejects placeholder strings (`TODO`, `...`, `unknown`),
+  mismatched `document_id` / filename, empty lists, non-ISO dates, wrong types
+- Validation runs before the harness starts so mis-filled templates never
+  silently produce misleading metrics
+
+**Why annotation is deferred to the user:**
+Fabricated annotations would violate the project's no-fabrication rule and
+produce metrics that cannot be independently re-verified. The validator
+intentionally blocks accidental un-filled templates so there is no path to
+"accidentally passing" metrics without real annotations.
+
+**Harness safety gates:**
+- `--confirm-groq-costs` required for real LLM runs (one request per paper)
+- `--dry-run` mode available for harness validation without any API calls
+- `GROQ_API_KEY` checked before constructing the analyzer
+- Per-paper analysis output saved to `evaluation/results/harness_<TS>/per_paper/`
+  for auditability
+
+**Test suite after Phase 1:** 647 passed, 2 pre-existing failures, 6 skipped.
+The 2 pre-existing failures (`test_app_ui`, `test_related_paper_extractor`) were
+present before Phase 1 and are unrelated to the new code.
+
+**How to run:**
+
+```powershell
+# 1. Generate annotation templates (one per paper you want to evaluate)
+python evaluation/generate_template.py --paper attention_is_all_you_need
+
+# 2. Fill in evaluation/gold_set/attention_is_all_you_need.json
+#    (open the file; replace every "TODO" with the real value from the PDF)
+
+# 3. Validate the annotation without running the pipeline
+python evaluation/run_harness.py --gold-dir evaluation/gold_set --dry-run
+
+# 4. Run against the real pipeline (uses Groq; costs apply)
+python evaluation/run_harness.py --gold-dir evaluation/gold_set --confirm-groq-costs
+
+# 5. View results
+#    evaluation/results/harness_<TIMESTAMP>/report_summary.txt
+#    evaluation/results/harness_<TIMESTAMP>/report.json
+```
+
+**Unmeasured items (documented, not hidden):**
+- Factual correctness: token-F1 is a surface proxy; a human must check whether
+  each extracted value is actually true.
+- Semantic equivalence: paraphrases score below 1.0 even if correct.
+- End-to-end numbers: no papers have been annotated yet, so the results table
+  in README.md cannot be filled in until annotations are supplied.
+
+---
+
+
 ## Proposed Technology Stack
 
 **Status:** PROPOSED (awaiting user approval)
