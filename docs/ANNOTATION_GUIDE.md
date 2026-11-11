@@ -328,8 +328,9 @@ evidence_pages: []         # Spread throughout or not applicable
 After filling in the gold annotation, run the validator:
 
 ```bash
-python evaluation/gold_set_schema.py evaluation/gold_set/your_paper.json
+python -c "import json,sys; from evaluation.gold_set_schema import validate_annotation; p=sys.argv[1]; validate_annotation(json.load(open(p, encoding='utf-8')), p.replace('\\','/').split('/')[-1][:-5]); print('VALID')" evaluation/gold_set/your_paper.json
 ```
+Prints VALID on success; otherwise it raises GoldSetValidationError naming the problem.
 
 The validator will check:
 - All required fields are present
