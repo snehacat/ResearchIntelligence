@@ -1,51 +1,55 @@
 {
   "document_id": "bert_pretraining",
   "source_pdf": "validation/step5/papers/bert_pretraining.pdf",
-  "annotator": "",
-  "annotation_date": "",
+  "annotator": "Sneha Kanswal",
+  "annotation_date": "2026-11-11",
   "split": "dev",
   "annotated_without_model_output": false,
-  "notes": "IMPORTANT: Fill this gold annotation by reading the PDF directly. DO NOT view any model output before filling this annotation. The 'annotated_without_model_output' field must be set to 'true' only if you filled this entirely from the PDF without first looking at model extraction results.",
+  "notes": "Fields were drafted with AI assistance from the source PDF, then checked by the owner against the paper (field contents and page numbers). The paper has no dedicated limitations section, so limitations are caveats the authors discuss in the experiments and appendix; this field is noisier to evaluate.",
   "fields": {
     "title": {
-      "value": "",
-      "evidence_pages": []
+      "value": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+      "evidence_pages": [1]
     },
     "publication_year": {
-      "value": "",
-      "evidence_pages": []
+      "value": "2019",
+      "evidence_pages": [1]
     },
     "abstract": {
-      "value": "",
-      "evidence_pages": []
+      "value": "We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers. Unlike recent language representation models (Peters et al., 2018a; Radford et al., 2018), BERT is designed to pre-train deep bidirectional representations from unlabeled text by jointly conditioning on both left and right context in all layers. As a result, the pre-trained BERT model can be fine-tuned with just one additional output layer to create state-of-the-art models for a wide range of tasks, such as question answering and language inference, without substantial task-specific architecture modifications. BERT is conceptually simple and empirically powerful. It obtains new state-of-the-art results on eleven natural language processing tasks, including pushing the GLUE score to 80.5% (7.7% point absolute improvement), MultiNLI accuracy to 86.7% (4.6% absolute improvement), SQuAD v1.1 question answering Test F1 to 93.2 (1.5 point absolute improvement) and SQuAD v2.0 Test F1 to 83.1 (5.1 point absolute improvement).",
+      "evidence_pages": [1]
     },
     "research_problem": {
-      "value": "",
-      "evidence_pages": []
+      "value": "Existing pre-trained language models are generally unidirectional, limiting their ability to use both left and right context at the same time. This is particularly harmful for token-level tasks such as question answering, where information from both directions is important. The paper aims to develop deeply bidirectional representations that can be fine-tuned for a wide range of language understanding tasks without major task-specific architecture changes.",
+      "evidence_pages": [1, 2]
     },
     "methodology": {
-      "value": "",
-      "evidence_pages": []
+      "value": "BERT uses a multi-layer bidirectional Transformer encoder to learn representations from both left and right context. It is pre-trained using two tasks: Masked Language Modelling (MLM), which predicts masked input tokens, and Next Sentence Prediction (NSP), which learns relationships between sentence pairs. For downstream tasks, a task-specific output layer is added and the model is fine-tuned end-to-end. The paper evaluates two model sizes: BERTBASE (110M parameters) and BERTLARGE (340M parameters).",
+      "evidence_pages": [3, 4, 5]
     },
     "dataset": {
-      "value": "",
-      "evidence_pages": []
+      "value": "Pre-training: BooksCorpus (800 million words) and English Wikipedia (2,500 million words). Downstream evaluation: GLUE tasks (MNLI, QQP, QNLI, SST-2, CoLA, STS-B, MRPC, RTE), SQuAD v1.1, SQuAD v2.0 and SWAG. TriviaQA is used for data augmentation before fine-tuning on SQuAD v1.1 in some experiments. CoNLL-2003 is used for the named entity recognition experiments comparing fine-tuning and feature-based approaches.",
+      "evidence_pages": [5, 6, 8, 7, 9, 15]
     },
     "reported_results": {
-      "value": "",
-      "evidence_pages": []
+      "value": "BERT-large obtains an official GLUE score of 80.5% (OpenAI GPT: 72.8) and 86.7% MNLI accuracy. SQuAD v1.1 test F1 is 93.2 for the BERT-large ensemble with TriviaQA augmentation (an ensemble of 7 systems). SQuAD v2.0 test F1 is 83.1 for a single BERT-large model. SWAG test accuracy is 86.3%. On CoNLL-2003 NER, fine-tuned BERT-large reaches 92.8 test F1.",
+      "evidence_pages": [1, 6, 7, 8]
     },
     "authors": {
-      "value": [],
-      "evidence_pages": []
+      "value": ["Jacob Devlin", "Ming-Wei Chang", "Kenton Lee", "Kristina Toutanova"],
+      "evidence_pages": [1]
     },
     "evaluation_metrics": {
-      "value": [],
-      "evidence_pages": []
+      "value": ["Accuracy", "F1 score", "Exact Match (EM)", "Spearman correlation", "GLUE score", "Language model perplexity"],
+      "evidence_pages": [6, 7, 8, 9]
     },
     "limitations": {
-      "value": [],
-      "evidence_pages": []
+      "value": [
+        "Masked language model pre-training converges slightly slower than left-to-right pre-training because only 15% of tokens are predicted in each batch.",
+        "The [MASK] token used during pre-training does not appear during fine-tuning, creating a pre-train/fine-tune mismatch that the authors mitigate with mixed replacement strategies.",
+        "Fine-tuning BERT-large was sometimes unstable on small datasets, so the authors ran several random restarts and selected the best model on the development set."
+      ],
+      "evidence_pages": [4, 6, 16]
     }
   }
 }
