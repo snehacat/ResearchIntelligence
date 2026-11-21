@@ -9,14 +9,15 @@ Usage
     python evaluation/run_harness.py --gold-dir evaluation/gold_set
 
 Required environment variable
-    GROQ_API_KEY   — Groq LLM key (analysis calls the real Groq backend)
+    GROQ_API_KEY or GEMINI_API_KEY, depending on the selected backend.
 
 Optional
-    RESEARCHINTELLIGENCE_LLM_MODEL   — override Groq model
+    RESEARCHINTELLIGENCE_LLM_MODEL   — override the selected provider's model
     RESEARCHINTELLIGENCE_LLM_BACKEND — override backend (groq | gemini)
 
 Cost confirmation
-    --confirm-groq-costs  must be passed to allow LLM API calls.
+    --confirm-api-costs  must be passed to allow LLM API calls.
+    --confirm-groq-costs remains as a compatibility alias.
 
 Offline / dry-run mode
     --dry-run  skips LLM extraction; all metrics are reported as N/A.
@@ -29,8 +30,8 @@ Split handling (item 7)
 
 Repeated runs (item 6)
     --runs N (default 1)  runs the full evaluation N times and reports
-    mean ± range for each metric.  Prints estimated Groq request count
-    before running.
+    mean ± range for each metric. Prints a baseline provider request estimate
+    before running; retries and JSON recovery can add requests.
 
 Citation sample (item 3)
     --citation-sample-dir  path to directory of citation sample .json files.
@@ -87,11 +88,22 @@ def _build_analyzer():
     return PaperAnalyzer(TextChunker(), retriever, answer_generator)
 
 
-def _run_analysis(analyzer, source_pdf: str, document_id: str) -> Dict[str, Any]:
-    from pdf_processing.text_extractor import TextExtractor
-    pdf_path = _PROJECT_ROOT / source_pdf
-    if not pdf_path.exists():
+def _run_analysis(
+    analyzer,
+    source_pdf: str,
+    document_id: str,
+    allowed_root: Path = _PROJECT_ROOT,
+) -> Dict[str, Any]:
+    root = allowed_root.resolve()
+    pdf_path = (root / source_pdf).resolve()
+    try:
+        pdf_path.relative_to(root)
+    except ValueError:
+        raise ValueError("PDF path must remain within the configured papers directory.") from None
+    if not pdf_path.is_file():
         raise FileNotFoundError(f"PDF not found: {pdf_path}")
+    from pdf_processing.text_extractor import TextExtractor
+
     extraction = TextExtractor().extract_from_file(str(pdf_path))
     return analyzer.analyze_paper(extraction, document_id=document_id)
 
@@ -139,7 +151,38 @@ def _write_json_report(
     """Write report.json and return the dict."""
     runs_data = []
     for run_idx, result in enumerate(all_run_results):
-        runs_data.append(result.to_dict())
+        run_data = result.to_dict()
+        if dry_run:
+            for key in run_data["summary"]:
+                if key != "num_papers":
+                    run_data["summary"][key] = None
+            for paper in run_data["per_paper"]:
+                for key in (
+                    "mean_token_f1",
+                    "mean_set_f1",
+                    "hit_rate@1",
+                    "hit_rate@3",
+                    "hit_rate@5",
+                    "mrr",
+                    "citation_traceability_rate",
+                ):
+                    paper[key] = None
+                for field_result in paper["fields"]:
+                    for key in (
+                        "correct_null",
+                        "mrr",
+                        "citation_traceable",
+                        "token_f1",
+                        "set_precision",
+                        "set_recall",
+                        "set_f1",
+                        "hit@1",
+                        "hit@3",
+                        "hit@5",
+                    ):
+                        if key in field_result:
+                            field_result[key] = None
+        runs_data.append(run_data)
 
     # Aggregate over runs
     num_runs = len(all_run_results)
@@ -164,6 +207,10 @@ def _write_json_report(
                 aggregate[key] = None
     else:
         aggregate = all_run_results[0].to_dict()["summary"] if all_run_results else {}
+    if dry_run:
+        for key in aggregate:
+            if key != "num_papers":
+                aggregate[key] = None
 
     report: Dict[str, Any] = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -201,6 +248,11 @@ def _write_markdown_report(
         f"Split: `{report['split']}`  |  Runs: {report['num_runs']}  |  Dry-run: {report['dry_run']}",
         "",
     ]
+    if report["dry_run"]:
+        lines += [
+            "> Dry run: no model analysis was performed; accuracy and retrieval metrics are N/A.",
+            "",
+        ]
 
     # Annotation independence
     ai = report.get("annotation_independence", {})
@@ -269,19 +321,19 @@ def _write_markdown_report(
     # Per-paper summary (run 1 only if multiple runs)
     if all_run_results:
         lines += ["## Per-Paper Summary (run 1)", ""]
-        first_run = all_run_results[0].to_dict()
+        first_run = report["runs"][0]
         lines.append("| Paper | token-F1 | set-F1 | HR@1 | HR@3 | HR@5 | MRR | Cite-Trace |")
         lines.append("|-------|----------|--------|------|------|------|-----|------------|")
         for pp in first_run.get("per_paper", []):
             lines.append(
                 f"| {pp['document_id']} "
-                f"| {pp.get('mean_token_f1', 'N/A')} "
-                f"| {pp.get('mean_set_f1', 'N/A')} "
-                f"| {pp.get('hit_rate@1', 'N/A')} "
-                f"| {pp.get('hit_rate@3', 'N/A')} "
-                f"| {pp.get('hit_rate@5', 'N/A')} "
-                f"| {pp.get('mrr', 'N/A')} "
-                f"| {pp.get('citation_traceability_rate', 'N/A')} |"
+                f"| {_fmt(pp.get('mean_token_f1'))} "
+                f"| {_fmt(pp.get('mean_set_f1'))} "
+                f"| {_fmt(pp.get('hit_rate@1'))} "
+                f"| {_fmt(pp.get('hit_rate@3'))} "
+                f"| {_fmt(pp.get('hit_rate@5'))} "
+                f"| {_fmt(pp.get('mrr'))} "
+                f"| {_fmt(pp.get('citation_traceability_rate'))} |"
             )
         lines.append("")
 
@@ -349,8 +401,13 @@ def main() -> None:
     )
     parser.add_argument(
         "--confirm-groq-costs",
+        "--confirm-api-costs",
+        dest="confirm_api_costs",
         action="store_true",
-        help="Required to allow real Groq API calls. Each paper uses one LLM request per run.",
+        help=(
+            "Required to allow real LLM API calls; "
+            "--confirm-groq-costs is a compatibility alias."
+        ),
     )
     parser.add_argument(
         "--document-id",
@@ -375,6 +432,25 @@ def main() -> None:
         ),
     )
     args = parser.parse_args()
+    if args.runs < 1:
+        parser.error("--runs must be a positive integer")
+    backend_name = None
+    if not args.dry_run:
+        from analysis.backend_factory import (
+            configured_backend_name,
+            configured_model_name,
+        )
+
+        backend_name = configured_backend_name()
+        if backend_name not in {"groq", "gemini"}:
+            parser.error(
+                "RESEARCHINTELLIGENCE_LLM_BACKEND must be one of: groq, gemini"
+            )
+        model_name = configured_model_name(backend_name)
+        if not model_name:
+            parser.error(
+                f"Set RESEARCHINTELLIGENCE_LLM_MODEL when using {backend_name}."
+            )
 
     # ── Load & validate gold set ──────────────────────────────────────────────
     gold_dir = _PROJECT_ROOT / args.gold_dir
@@ -428,12 +504,16 @@ def main() -> None:
     )
 
     # ── Safety gate for real API calls ───────────────────────────────────────
-    if not args.dry_run and not args.confirm_groq_costs:
+    if not args.dry_run and not args.confirm_api_costs:
+        api_key_env_var = "GROQ_API_KEY" if backend_name == "groq" else "GEMINI_API_KEY"
         print(
-            "\nThis harness will send selected PDF excerpts to the Groq API "
+            f"\nThis harness will send selected PDF excerpts to the {backend_name} API "
             f"({len(annotations)} paper(s) × {args.runs} run(s) = "
-            f"{len(annotations) * args.runs} request(s)), which may incur charges.\n"
-            "Re-run with --confirm-groq-costs to proceed, or --dry-run to skip LLM calls.",
+            f"{len(annotations) * args.runs} baseline request(s)), which may incur charges.\n"
+            "Provider retries, JSON fallback, or malformed-response recovery can add "
+            "requests; this baseline is not a maximum or a billing guarantee.\n"
+            f"Re-run with --confirm-api-costs to proceed, or --dry-run to skip LLM calls. "
+            f"Required key: {api_key_env_var}.",
             file=sys.stderr,
         )
         sys.exit(1)
@@ -441,11 +521,21 @@ def main() -> None:
     if not args.dry_run:
         estimated_requests = len(annotations) * args.runs
         print(
-            f"Estimated Groq requests: {estimated_requests} "
-            f"({len(annotations)} paper(s) × {args.runs} run(s))."
+            f"Baseline {backend_name} request estimate (no retry/fallback): {estimated_requests} "
+            f"({len(annotations)} paper(s) × {args.runs} run(s)). This is not a maximum "
+            "or a billing guarantee; provider retries and JSON recovery can add requests."
         )
-        if not os.environ.get("GROQ_API_KEY"):
-            print("Error: GROQ_API_KEY environment variable is not set.", file=sys.stderr)
+        if backend_name == "gemini":
+            print(
+                "WARNING: The Gemini integration is unverified and is not claimed as fully supported.",
+                file=sys.stderr,
+            )
+        api_key_env_var = "GROQ_API_KEY" if backend_name == "groq" else "GEMINI_API_KEY"
+        if not os.environ.get(api_key_env_var, "").strip():
+            print(
+                f"Error: {api_key_env_var} environment variable is not set.",
+                file=sys.stderr,
+            )
             sys.exit(1)
 
     # ── Build output dir ──────────────────────────────────────────────────────
@@ -455,16 +545,23 @@ def main() -> None:
     else:
         output_dir = _PROJECT_ROOT / "evaluation" / "results" / f"harness_{timestamp}"
     per_paper_dir = output_dir / "per_paper"
-
-    # ── Item 7: audit log for test split ─────────────────────────────────────
-    if args.split == "test":
-        _log_test_split_run(output_dir, len(annotations), args.runs, args.dry_run)
+    if output_dir.exists():
+        parser.error(f"Output directory already exists: {output_dir}")
 
     # ── Build analyzer once (reused across runs) ──────────────────────────────
     analyzer = None
     if not args.dry_run:
         print("Building PaperAnalyzer (embedding model may download on first run)…")
         analyzer = _build_analyzer()
+
+    try:
+        output_dir.mkdir(parents=True, exist_ok=False)
+    except FileExistsError:
+        parser.error(f"Output directory already exists: {output_dir}")
+
+    # ── Item 7: audit log for test split ─────────────────────────────────────
+    if args.split == "test":
+        _log_test_split_run(output_dir, len(annotations), args.runs, args.dry_run)
 
     # ── Run N times (item 6) ──────────────────────────────────────────────────
     all_run_results: List[HarnessResult] = []
@@ -485,9 +582,16 @@ def main() -> None:
                     analysis = _run_dry(annotation)
                 else:
                     source_pdf = annotation["source_pdf"]
+                    allowed_pdf_root = _PROJECT_ROOT
                     if args.papers_dir:
-                        source_pdf = str(Path(args.papers_dir) / Path(source_pdf).name)
-                    analysis = _run_analysis(analyzer, source_pdf, doc_id)
+                        allowed_pdf_root = _PROJECT_ROOT / args.papers_dir
+                        source_pdf = Path(source_pdf).name
+                    analysis = _run_analysis(
+                        analyzer,
+                        source_pdf,
+                        doc_id,
+                        allowed_root=allowed_pdf_root,
+                    )
             except FileNotFoundError as exc:
                 print(f"  SKIP — {exc}")
                 continue
@@ -511,14 +615,17 @@ def main() -> None:
             result = evaluate_paper(annotation, analysis)
             paper_results.append(result)
 
-            hr_at_3 = result.hit_rate_at_k(3)
-            print(
-                f"  token-F1={result.mean_token_f1:.3f}  "
-                f"set-F1={result.mean_set_f1!s}  "
-                f"HR@3={hr_at_3!s}  "
-                f"MRR={result.mrr!s}  "
-                f"cite-trace={result.citation_traceability_rate!s}"
-            )
+            if args.dry_run:
+                print("  Metrics: N/A (dry run; no model analysis performed)")
+            else:
+                hr_at_3 = result.hit_rate_at_k(3)
+                print(
+                    f"  token-F1={result.mean_token_f1:.3f}  "
+                    f"set-F1={result.mean_set_f1!s}  "
+                    f"HR@3={hr_at_3!s}  "
+                    f"MRR={result.mrr!s}  "
+                    f"cite-trace={result.citation_traceability_rate!s}"
+                )
 
         if not paper_results:
             print(f"\nRun {run_idx + 1}: no papers evaluated.", file=sys.stderr)
@@ -535,9 +642,9 @@ def main() -> None:
     # ── Citation agreement (item 3) ───────────────────────────────────────────
     citation_agreement_results: Optional[List[Dict[str, Any]]] = None
     citation_sample_dir = None
-    if args.citation_sample_dir:
+    if not args.dry_run and args.citation_sample_dir:
         citation_sample_dir = _PROJECT_ROOT / args.citation_sample_dir
-    else:
+    elif not args.dry_run:
         default_cs = _PROJECT_ROOT / "evaluation" / "citation_sample"
         if default_cs.is_dir():
             citation_sample_dir = default_cs

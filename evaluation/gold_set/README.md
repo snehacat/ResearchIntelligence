@@ -120,15 +120,19 @@ the validator catches unfilled entries.
 # Validate the gold set offline (no Groq calls, no cost)
 python evaluation/run_harness.py --gold-dir evaluation/gold_set --dry-run
 
-# Run against the dev split (uses Groq — costs apply)
-python evaluation/run_harness.py --gold-dir evaluation/gold_set --split dev --confirm-groq-costs
+# Run against the dev split (uses the configured backend — costs may apply)
+python evaluation/run_harness.py --gold-dir evaluation/gold_set --split dev --confirm-api-costs
 
 # Run 3 times to quantify LLM variance
-python evaluation/run_harness.py --gold-dir evaluation/gold_set --split dev --runs 3 --confirm-groq-costs
+python evaluation/run_harness.py --gold-dir evaluation/gold_set --split dev --runs 3 --confirm-api-costs
 
 # Run against the test split (final numbers only — adds audit log entry)
-python evaluation/run_harness.py --gold-dir evaluation/gold_set --split test --confirm-groq-costs
+python evaluation/run_harness.py --gold-dir evaluation/gold_set --split test --confirm-api-costs
 ```
+
+The request estimate is a baseline without retries or JSON recovery, not a
+maximum or billing guarantee. The Gemini harness integration is unverified;
+the harness defaults to Groq.
 
 Output is written to `evaluation/results/harness_<TIMESTAMP>/`:
 - `report.json` — full metrics in JSON

@@ -112,6 +112,16 @@ def test_groq_backend_requires_key_without_exposing_key(monkeypatch):
     assert API_KEY not in str(error.value)
 
 
+def test_groq_backend_rejects_blank_api_key(monkeypatch):
+    monkeypatch.setenv("GROQ_API_KEY", "   ")
+    backend = GroqBackend(client_factory=Mock())
+
+    with pytest.raises(GroqBackendError, match="GROQ_API_KEY"):
+        backend.generate_json("prompt", timeout_seconds=3, options={})
+
+    backend.client_factory.assert_not_called()
+
+
 def test_groq_backend_reads_api_key_at_call_time(monkeypatch):
     client, _ = client_with_results(completion())
     factory = Mock(return_value=client)

@@ -48,7 +48,7 @@ for fr in paper_result.field_results:
     print(f"  Gold null: {fr.gold_is_null}")
     print(f"  Predicted null: {fr.predicted_is_null}")
     print(f"  Correct null: {fr.correct_null}")
-    if fr.is_set_list_field:
+    if fr.is_list_field:
         print(f"  Set Precision: {fr.set_precision:.4f}")
         print(f"  Set Recall: {fr.set_recall:.4f}")
         print(f"  Set F1: {fr.set_f1:.4f}")

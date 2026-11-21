@@ -7,6 +7,7 @@ already blocks external services.
 from __future__ import annotations
 
 import json
+import runpy
 import tempfile
 from copy import deepcopy
 from pathlib import Path
@@ -680,6 +681,63 @@ class TestEvaluatePaper:
 # HarnessResult aggregation and to_dict
 # ─────────────────────────────────────────────────────────────────────────────
 
+def test_evaluate_single_reports_list_field_metrics(monkeypatch, capsys, tmp_path):
+    list_result = FieldResult(
+        field_name="authors",
+        is_list_field=True,
+        token_f1=0.0,
+        set_precision=0.8,
+        set_recall=0.6,
+        set_f1=0.6857,
+        gold_is_null=False,
+        predicted_is_null=False,
+        correct_null=False,
+        retrieval_hits={1: True, 3: True, 5: True},
+        retrieved_pages=[1],
+        annotated_pages=[1],
+        mrr=1.0,
+        citation_traceable=True,
+    )
+    paper_result = PaperResult(
+        document_id="test_paper",
+        field_results=[list_result],
+    )
+
+    monkeypatch.setattr(
+        "evaluation.gold_set_schema.load_annotation",
+        lambda path: {},
+    )
+    monkeypatch.setattr(
+        "evaluation.metrics.evaluate_paper",
+        lambda annotation, analysis: paper_result,
+    )
+
+    monkeypatch.chdir(tmp_path)
+    analysis_path = (
+        tmp_path
+        / "validation"
+        / "step5"
+        / "runs"
+        / "20261029_review_flag_check"
+        / "results"
+        / "attention_is_all_you_need_result.json"
+    )
+    analysis_path.parent.mkdir(parents=True)
+    analysis_path.write_text('{"analysis": {}}', encoding="utf-8")
+
+    script_path = Path(__file__).parents[2] / "evaluation" / "evaluate_single.py"
+    runpy.run_path(
+        str(script_path),
+        run_name="__main__",
+    )
+
+    output = capsys.readouterr().out
+    assert "\nauthors:" in output
+    assert "Set Precision: 0.8000" in output
+    assert "Set Recall: 0.6000" in output
+    assert "Set F1: 0.6857" in output
+
+
 class TestHarnessResult:
 
     def _make_field_result(
@@ -961,7 +1019,9 @@ class TestHarnessRunnerDryRun:
             report = json.load(fh)
         assert report["aggregate_summary"]["num_papers"] == 1
 
-    def test_dry_run_all_metrics_zero_for_non_null_fields(self, valid_annotation, tmp_path):
+    def test_dry_run_metrics_are_not_reported_as_model_scores(
+        self, valid_annotation, tmp_path
+    ):
         gold_dir = tmp_path / "gold_set"
         gold_dir.mkdir()
         self._write_annotation(gold_dir / "test_paper.json", valid_annotation)
@@ -981,7 +1041,12 @@ class TestHarnessRunnerDryRun:
         with open(output_dir / "report.json", encoding="utf-8") as fh:
             report = json.load(fh)
         pp = report["runs"][0]["per_paper"][0]
-        assert pp["mean_token_f1"] == pytest.approx(0.0)
+        assert report["aggregate_summary"]["macro_token_f1"] is None
+        assert pp["mean_token_f1"] is None
+        assert pp["fields"][0]["token_f1"] is None
+        report_markdown = (output_dir / "report.md").read_text(encoding="utf-8")
+        assert "accuracy and retrieval metrics are N/A" in report_markdown
+        assert "| test_paper | N/A | N/A | N/A | N/A | N/A | N/A | N/A |" in report_markdown
 
     def test_dry_run_no_groq_key_required(self, valid_annotation, tmp_path, monkeypatch):
         monkeypatch.delenv("GROQ_API_KEY", raising=False)
@@ -1001,6 +1066,49 @@ class TestHarnessRunnerDryRun:
             from evaluation.run_harness import main
             main()  # Must not raise
 
+    def test_dry_run_skips_citation_agreement(self, valid_annotation, tmp_path):
+        gold_dir = tmp_path / "gold_set"
+        gold_dir.mkdir()
+        self._write_annotation(gold_dir / "test_paper.json", valid_annotation)
+        citation_dir = tmp_path / "citation_samples"
+        citation_dir.mkdir()
+        (citation_dir / "test_paper.json").write_text(
+            json.dumps({
+                "document_id": "test_paper",
+                "annotator": "Test",
+                "annotation_date": "2026-11-10",
+                "annotated_without_model_output": True,
+                "notes": None,
+                "pairs": [{
+                    "pair_id": "title_1",
+                    "field_name": "title",
+                    "claim": "Paper title",
+                    "passage": "A passage from the paper.",
+                    "chunk_id": "test_chunk",
+                    "page": 1,
+                    "label": "unsupported",
+                }],
+            }),
+            encoding="utf-8",
+        )
+        output_dir = tmp_path / "output"
+
+        import sys
+        args = [
+            "run_harness.py",
+            "--gold-dir", str(gold_dir),
+            "--output-dir", str(output_dir),
+            "--citation-sample-dir", str(citation_dir),
+            "--dry-run",
+        ]
+        with patch.object(sys, "argv", args):
+            from evaluation.run_harness import main
+            main()
+
+        with open(output_dir / "report.json", encoding="utf-8") as fh:
+            report = json.load(fh)
+        assert "citation_agreement" not in report
+
     def test_requires_confirm_costs_without_dry_run(self, valid_annotation, tmp_path):
         gold_dir = tmp_path / "gold_set"
         gold_dir.mkdir()
@@ -1017,6 +1125,163 @@ class TestHarnessRunnerDryRun:
             with pytest.raises(SystemExit) as exc_info:
                 main()
         assert exc_info.value.code != 0
+
+    @pytest.mark.parametrize("runs", ["0", "-1"])
+    def test_rejects_non_positive_runs(self, runs, capsys):
+        import sys
+
+        with patch.object(sys, "argv", ["run_harness.py", "--runs", runs]):
+            from evaluation.run_harness import main
+            with pytest.raises(SystemExit) as exc_info:
+                main()
+
+        assert exc_info.value.code == 2
+        assert "--runs must be a positive integer" in capsys.readouterr().err
+
+    def test_accepts_one_run(self, valid_annotation, tmp_path):
+        gold_dir = tmp_path / "gold_set"
+        gold_dir.mkdir()
+        self._write_annotation(gold_dir / "test_paper.json", valid_annotation)
+        output_dir = tmp_path / "output"
+
+        import sys
+        args = [
+            "run_harness.py",
+            "--gold-dir", str(gold_dir),
+            "--output-dir", str(output_dir),
+            "--dry-run",
+            "--runs", "1",
+        ]
+        with patch.object(sys, "argv", args):
+            from evaluation.run_harness import main
+            main()
+
+        with open(output_dir / "report.json", encoding="utf-8") as fh:
+            report = json.load(fh)
+        assert report["num_runs"] == 1
+        assert len(report["runs"]) == 1
+
+    def test_gemini_backend_uses_its_key_and_is_labeled_unverified(
+        self, valid_annotation, tmp_path, monkeypatch, capsys
+    ):
+        monkeypatch.setenv("RESEARCHINTELLIGENCE_LLM_BACKEND", "gemini")
+        monkeypatch.setenv("RESEARCHINTELLIGENCE_LLM_MODEL", "test-model")
+        monkeypatch.setenv("GEMINI_API_KEY", "test-gemini-key")
+        monkeypatch.delenv("GROQ_API_KEY", raising=False)
+
+        gold_dir = tmp_path / "gold_set"
+        gold_dir.mkdir()
+        self._write_annotation(gold_dir / "test_paper.json", valid_annotation)
+        output_dir = tmp_path / "output"
+
+        import evaluation.run_harness as runner
+        monkeypatch.setattr(runner, "_build_analyzer", lambda: object())
+        monkeypatch.setattr(
+            runner,
+            "_run_analysis",
+            lambda *args, **kwargs: {
+                "document_id": "test_paper",
+                "evidence_citations": {},
+                **{field: None for field in (
+                    "title", "authors", "publication_year", "abstract",
+                    "research_problem", "methodology", "dataset",
+                    "evaluation_metrics", "reported_results", "limitations",
+                )},
+            },
+        )
+
+        import sys
+        args = [
+            "run_harness.py",
+            "--gold-dir", str(gold_dir),
+            "--output-dir", str(output_dir),
+            "--confirm-api-costs",
+        ]
+        with patch.object(sys, "argv", args):
+            runner.main()
+
+        captured = capsys.readouterr()
+        assert "Baseline gemini request estimate" in captured.out
+        assert "not a maximum" in captured.out
+        assert "Gemini integration is unverified" in captured.err
+
+    def test_gemini_backend_does_not_accept_groq_key_as_credential(
+        self, valid_annotation, tmp_path, monkeypatch, capsys
+    ):
+        monkeypatch.setenv("RESEARCHINTELLIGENCE_LLM_BACKEND", "gemini")
+        monkeypatch.setenv("RESEARCHINTELLIGENCE_LLM_MODEL", "test-model")
+        monkeypatch.setenv("GROQ_API_KEY", "test-groq-key")
+        monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+
+        gold_dir = tmp_path / "gold_set"
+        gold_dir.mkdir()
+        self._write_annotation(gold_dir / "test_paper.json", valid_annotation)
+
+        import evaluation.run_harness as runner
+        monkeypatch.setattr(
+            runner,
+            "_build_analyzer",
+            lambda: pytest.fail(
+                "analyzer must not be built without Gemini credentials"
+            ),
+        )
+        import sys
+        args = [
+            "run_harness.py",
+            "--gold-dir", str(gold_dir),
+            "--output-dir", str(tmp_path / "output"),
+            "--confirm-api-costs",
+        ]
+        with patch.object(sys, "argv", args):
+            with pytest.raises(SystemExit) as exc_info:
+                runner.main()
+
+        assert exc_info.value.code == 1
+        assert "GEMINI_API_KEY" in capsys.readouterr().err
+
+    def test_rejects_pdf_path_outside_allowed_root(self, tmp_path):
+        from evaluation.run_harness import _run_analysis
+
+        allowed_root = tmp_path / "papers"
+        allowed_root.mkdir()
+        outside_pdf = tmp_path / "outside.pdf"
+        outside_pdf.write_bytes(b"%PDF-")
+
+        with pytest.raises(
+            ValueError, match="within the configured papers directory"
+        ):
+            _run_analysis(
+                object(),
+                "..\\outside.pdf",
+                "test_paper",
+                allowed_root=allowed_root,
+            )
+
+    def test_existing_output_directory_is_not_overwritten(
+        self, valid_annotation, tmp_path
+    ):
+        gold_dir = tmp_path / "gold_set"
+        gold_dir.mkdir()
+        self._write_annotation(gold_dir / "test_paper.json", valid_annotation)
+        output_dir = tmp_path / "output"
+        output_dir.mkdir()
+        existing_report = output_dir / "report.md"
+        existing_report.write_text("keep this report", encoding="utf-8")
+
+        import sys
+        args = [
+            "run_harness.py",
+            "--gold-dir", str(gold_dir),
+            "--output-dir", str(output_dir),
+            "--dry-run",
+        ]
+        with patch.object(sys, "argv", args):
+            from evaluation.run_harness import main
+            with pytest.raises(SystemExit) as exc_info:
+                main()
+
+        assert exc_info.value.code == 2
+        assert existing_report.read_text(encoding="utf-8") == "keep this report"
 
     def test_invalid_gold_set_exits_with_error(self, valid_annotation, tmp_path):
         gold_dir = tmp_path / "gold_set"
@@ -1088,12 +1353,13 @@ class TestHarnessRunnerDryRun:
             report = json.load(fh)
         assert report["num_runs"] == 3
         assert len(report["runs"]) == 3
-        # With >1 run, aggregate values are dicts with mean/min/max
         agg = report["aggregate_summary"]
-        assert isinstance(agg["macro_token_f1"], dict)
-        assert "mean" in agg["macro_token_f1"]
-        assert "min" in agg["macro_token_f1"]
-        assert "max" in agg["macro_token_f1"]
+        assert agg["num_papers"] == 1
+        assert agg["macro_token_f1"] is None
+        assert all(
+            run["summary"]["macro_token_f1"] is None
+            for run in report["runs"]
+        )
 
     # Item 7 — split filter
     def test_split_filter_dev_only(self, valid_annotation, tmp_path):

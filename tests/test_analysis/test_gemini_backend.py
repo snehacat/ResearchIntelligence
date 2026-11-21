@@ -170,6 +170,17 @@ def test_gemini_backend_missing_key_names_variable_only(monkeypatch):
     assert API_KEY not in str(error.value)
 
 
+def test_gemini_backend_rejects_blank_api_key(monkeypatch):
+    monkeypatch.setenv("GEMINI_API_KEY", "   ")
+    http_post = Mock()
+    backend = GeminiBackend("test-model", http_post=http_post)
+
+    with pytest.raises(GeminiBackendError, match="GEMINI_API_KEY"):
+        backend.generate_json("prompt", timeout_seconds=5, options={})
+
+    http_post.assert_not_called()
+
+
 def test_echoed_api_key_is_redacted_from_result_and_analyzer_diagnostics(
     monkeypatch, paper_analyzer
 ):

@@ -71,7 +71,7 @@ class GeminiBackend(LLMBackend):
         options: Mapping[str, Any],
     ) -> LLMGenerationResult:
         api_key = os.environ.get(self.api_key_env_var)
-        if not api_key:
+        if not api_key or not api_key.strip():
             raise GeminiBackendError(
                 f"Missing API key environment variable: {self.api_key_env_var}"
             )
