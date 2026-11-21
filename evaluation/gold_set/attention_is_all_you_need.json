@@ -16,7 +16,7 @@
       "evidence_pages": [1]
     },
     "abstract": {
-      "value": "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show that the Transformer outperforms architectures based on recurrent or convolutional layers in terms of quality while being more parallelizable and requiring significantly less time to train.",
+      "value": "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task, improving over the existing best results, including ensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.8 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature. We show that the Transformer generalizes well to other tasks by applying it successfully to English constituency parsing both with large and limited training data.",
       "evidence_pages": [1]
     },
     "research_problem": {
@@ -24,15 +24,15 @@
       "evidence_pages": [1, 2]
     },
     "methodology": {
-      "value": "Transformer architecture with multi-head self-attention, positional encodings, feed-forward layers, encoder-decoder structure, and residual connections.",
-      "evidence_pages": [2, 3, 5, 6]
+      "value": "The Transformer uses an encoder-decoder architecture with six stacked layers in both the encoder and decoder. It employs scaled dot-product attention and eight-head multi-head attention, including masked self-attention in the decoder. Each layer also contains position-wise feed-forward networks, residual connections, and layer normalization. Sinusoidal positional encodings are added to input embeddings to represent token positions.",
+      "evidence_pages": [2, 3, 4, 5, 6]
     },
     "dataset": {
-      "value": "WMT 2014 English-to-German and English-to-French translation datasets",
-      "evidence_pages": [7]
+      "value": "WMT 2014 English-to-German dataset (about 4.5 million sentence pairs, byte-pair encoding with a shared source-target vocabulary of about 37,000 tokens); WMT 2014 English-to-French dataset (36 million sentences, 32,000 word-piece vocabulary); and the Wall Street Journal portion of the Penn Treebank for English constituency parsing (about 40,000 training sentences), with a semi-supervised setting using additional high-confidence and BerkeleyParser corpora (approximately 17 million sentences).",
+      "evidence_pages": [7, 9]
     },
     "reported_results": {
-      "value": "28.4 BLEU on WMT 2014 English-to-German translation task, 41.8 BLEU on WMT 2014 English-to-French translation task. The Transformer base model achieves 28.4 BLEU on WMT 2014 En-De, outperforming previous best models. The Transformer big model achieves 41.8 BLEU on WMT 2014 En-Fr.",
+      "value": "The Transformer base model achieves 27.3 BLEU on WMT 2014 English-to-German and 38.1 BLEU on WMT 2014 English-to-French. The Transformer big model achieves 28.4 BLEU on English-to-German and 41.8 BLEU on English-to-French, establishing new state-of-the-art results for the respective translation tasks. The big model's English-to-German training took 3.5 days on eight NVIDIA P100 GPUs.",
       "evidence_pages": [7, 8]
     },
     "authors": {
@@ -50,21 +50,16 @@
     },
     "evaluation_metrics": {
       "value": [
-        "BLEU",
-        "perplexity",
-        "training time",
-        "parameter count"
+        "BLEU score",
+        "Perplexity (PPL)"
       ],
-      "evidence_pages": [7, 8]
+      "evidence_pages": [8, 9]
     },
     "limitations": {
       "value": [
-        "The Transformer has a quadratic time complexity in sequence length due to the self-attention mechanism, which makes it less efficient for very long sequences compared to RNNs.",
-        "The model requires large amounts of data and compute resources to train effectively.",
-        "Positional encodings are fixed-length sinusoidal functions; while they work well, other approaches might be more flexible.",
-        "The model does not inherently handle variable-length sequences in the same way RNNs do with their recurrence."
+        "Full self-attention has a computational complexity of O(n² · d) per layer, making it less suitable for very long sequences. The authors propose investigating restricted local attention as a way to improve computational efficiency for such sequences."
       ],
-      "evidence_pages": [7, 8]
+      "evidence_pages": [6, 7, 10]
     }
   }
 }
